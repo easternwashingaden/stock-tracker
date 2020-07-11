@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import Stock from './Stock'
+import Home from './Home'
 
 ReactDOM.render(
   <React.StrictMode>

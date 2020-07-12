@@ -110,7 +110,7 @@ class StockForm extends Component {
         )
     
     return (
-     
+      <section>
         <div>
           <AppNav/>
           <Container>
@@ -152,9 +152,9 @@ class StockForm extends Component {
 
       {/* <Stock/> */}
           <Container>
-            <h3>Stock Collection</h3>
-            <Table className= 'mt-4'>
-            <thead>
+            <h3 style= {{justifyContent: 'center'}}>Stock Collection</h3>
+            <Table className= 'mt-4 table-hover'>
+            <thead className="thead-light"> 
               <tr>
                 <th>Id</th>
                 <th>Ticker</th>
@@ -173,6 +173,7 @@ class StockForm extends Component {
         }
 
         </div>
+      </section>
     );
   }
 }

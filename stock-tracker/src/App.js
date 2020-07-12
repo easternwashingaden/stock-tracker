@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Stock from './Stock';
 import Home from './Home';
-import Search from './Search';
+import StockPerformance from './StockPerformance';
 import StockForm from './StockForm';
 import {Route, BrowserRouter as Router, Switch} from 'react-router-dom'
 
@@ -14,7 +14,7 @@ class App extends Component {
           <Route path='/'exact={true} component={Home}/>
           <Route path='/stocks' exact={true} component={Stock}/>
           <Route path='/stock' exact={true} component={StockForm}/>
-          <Route path='/search' exact={true} component={Search}/>
+          <Route path='/stockperformance' exact={true} component={StockPerformance}/>
         </Switch>
       </Router>
      );

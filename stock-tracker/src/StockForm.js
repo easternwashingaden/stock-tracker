@@ -9,18 +9,15 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {Table} from 'reactstrap';
 import Moment from 'react-moment';
 class StockForm extends Component {
-  
-
-
   emptyItem = {
     id: '103',
     purchasedDate : new Date(),
     share: 100,
     purchasedPrice: 350,
     users: [2,"Aden","Aden@john.com"]
-}
+  }
 
-constructor(props){
+  constructor(props){
     super(props)
     this.state = {
         isLoading : true,
@@ -29,7 +26,7 @@ constructor(props){
         item : this.emptyItem
     }
     this.handleSumbit = this.handleSumbit.bind(this);
-    this.handleChange = this.handleChange .bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
   }
   

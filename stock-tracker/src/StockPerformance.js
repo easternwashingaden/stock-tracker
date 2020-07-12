@@ -46,81 +46,87 @@ class StockPerformance extends React.Component {
 
   
     this.cancel = axios.CancelToken.source();
-
-    axios.get(API_Call)
-      .then ((res) => {
-        console.log(res);
-        console.log('successfully here');
-        
-        this.setState({
-          loading: false,
-        }); 
-        for (var key in res.data['Time Series (Daily)']) {
-          stockChartXValuesFunction.push(key);
-          stockChartYValuesFunction.push(res.data['Time Series (Daily)'][key]['1. open']);
-        }
-
-        console.log(stockChartXValuesFunction);
-          pointerToThis.setState({
-          stockChartXValues: stockChartXValuesFunction,
-          stockChartYValues: stockChartYValuesFunction
-        });
-      })
-      .catch((error) => {
-        if (axios.isCancel(error) || error) {
+    // if (API_Call){
+      axios.get(API_Call)
+        .then ((res) => {
+          console.log(res);
+          console.log('successfully here');
+          
           this.setState({
             loading: false,
-            message: 'Failed to fetch results.Please check network',
-          });
-        }
-      });
-      this.setState({
-        query: ""
-      });
+          }); 
+          for (var key in res.data['Time Series (Daily)']) {
+            stockChartXValuesFunction.push(key);
+            stockChartYValuesFunction.push(res.data['Time Series (Daily)'][key]['1. open']);
+          }
 
+          console.log(stockChartXValuesFunction);
+            pointerToThis.setState({
+            stockChartXValues: stockChartXValuesFunction,
+            stockChartYValues: stockChartYValuesFunction
+          });
+        })
+        .catch((error) => {
+          if (axios.isCancel(error) || error) {
+            this.setState({
+              loading: false,
+              message: 'Failed to fetch results.Please check network',
+            });
+          }
+        });
+        this.setState({
+          query: ""
+        });
+
+      // TODO: need to work on the flash message when there is no symby matches
+      // }else{
+      //   return<h4>The stock symbol does not in the system.</h4>
+      // }
     }
+
   
   render(){
     const { query } = this.state
-    const { stockChartXValuesFunction } = this.state
-  
     return (
-      <div>
-        <AppNav/> 
-        <div className="Search-box">
-          <form onSubmit={this.handleSumbit} >
+      <section>
+        <div>
+         <AppNav/>
+          <div style = {{margin: '2rem'}}>
             <div>
-              <h4>Please enter the stock ticker/symbol</h4>
-              {/* <label>Title </label> */}
-              <input
-                name="title"
-                value={query}
-                onChange = {this.handleChange}
-                type="text"
-                placeholder = "Type stock symbol here..."
-              />
+              <p>📈Please enter the stock symbol </p>
             </div>
-              <div className="button-search-div">
-                <button>Search</button>
+            <br></br>
+            <form className="form-inline my-2 my-lg-0" onSubmit={this.handleSumbit} >
+              <div>
+                <input
+                  name="title"
+                  value={query}
+                  onChange = {this.handleChange}
+                  type="text"
+                  placeholder = "stock symbol..."
+                  className= "form-control mr-sm-4" 
+                />
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
               </div>
-          </form>
-        </div>
-      {this.state.stockChartXValues && this.state.stockChartYValues.length ? <Plot
-        data={[
-        {
-          x: this.state.stockChartXValues,
-          y: this.state.stockChartYValues,
-          type: 'scatter',
-          mode: 'lines+markers',
-          marker: {color: 'red'},
+            </form>
+          </div>
+        {this.state.stockChartXValues && this.state.stockChartYValues.length ? <Plot
+          data={[
+          {
+            x: this.state.stockChartXValues,
+            y: this.state.stockChartYValues,
+            type: 'scatter',
+            mode: 'lines+markers',
+            marker: {color: 'red'},
+          }
+        ]}
+          layout={{width: 720, height: 440, title: 'Stock Performance'}}
+        />
+        :
+        <h2 className="text-center">No Results</h2>
         }
-      ]}
-        layout={{width: 720, height: 440, title: 'Stock Performance'}}
-      />
-      :
-      <h2 className="text-center">No Results</h2>
-      }
-    </div>  
+      </div>
+    </section>  
     );
   }
 

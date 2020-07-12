@@ -55,30 +55,31 @@ class Stock extends Component {
             )
           
         return (
+            <section>
+                <div>
+                    <AppNav/>
+                    <Container style = {{margin: '2rem'}}>
+                        <h3>Stock Collection</h3>
+                        <Table className= 'mt-4 table-hover'>
+                            <thead className="thead-light">
+                            <tr>
+                                <th>Id</th>
+                                <th>Ticker</th>
+                                <th>Share</th>
+                                <th>Purchased Price</th>
+                                <th>Purchased Date</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {rows}
+                            </tbody>
 
-            <div>
-                <AppNav/>
-                <Container>
-                    <h3>Stock Collection</h3>
-                    <Table className= 'mt-4'>
-                        <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Ticker</th>
-                            <th>Share</th>
-                            <th>Purchased Price</th>
-                            <th>Purchased Date</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {rows}
-                        </tbody>
+                        </Table>
+                    </Container>
 
-                    </Table>
-          </Container>
-
-            </div>
+                </div>
+            </section>
 
         );
     }

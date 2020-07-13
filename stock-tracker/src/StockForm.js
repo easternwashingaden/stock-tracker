@@ -97,18 +97,6 @@ class StockForm extends Component {
         </option>
       )
     
-    let rows = 
-      Stocks.map(stock =>
-        <tr key = {stock.id} >
-          <td>{stock.id}</td>
-          <td>{stock.ticker}</td>
-          <td>{stock.share}</td>
-          <td>{stock.price}</td>
-          <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
-          <td><Button size= 'sm' color='danger' onClick={()=> this.remove(stock.id)}>Delete</Button></td>
-        </tr>
-        )
-    
     return (
       <section>
         <div>
@@ -147,31 +135,8 @@ class StockForm extends Component {
             </Form>
 
           </Container>
-      {' '}
-      <br></br>
 
-      {/* <Stock/> */}
-          <Container>
-            <h3 style= {{justifyContent: 'center'}}>Stock Collection</h3>
-            <Table className= 'mt-4 table-hover'>
-            <thead className="thead-light"> 
-              <tr>
-                <th>Id</th>
-                <th>Ticker</th>
-                <th>Share</th>
-                <th>Purchased Price</th>
-                <th>Purchased Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows}
-            </tbody>
-
-            </Table>
-          </Container>
-        }
-
+      
         </div>
       </section>
     );

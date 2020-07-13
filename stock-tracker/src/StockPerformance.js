@@ -57,10 +57,10 @@ class StockPerformance extends React.Component {
           }); 
           for (var key in res.data['Time Series (Daily)']) {
             stockChartXValuesFunction.push(key);
-            stockChartYValuesFunction.push(res.data['Time Series (Daily)'][key]['1. open']);
+            stockChartYValuesFunction.push(res.data['Time Series (Daily)'][key]['4. close']);
           }
 
-          console.log(stockChartXValuesFunction);
+          console.log(stockChartYValuesFunction);
             pointerToThis.setState({
             stockChartXValues: stockChartXValuesFunction,
             stockChartYValues: stockChartYValuesFunction

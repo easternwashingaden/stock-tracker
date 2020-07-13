@@ -13,6 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 class Stock extends Component {
     constructor(props){
         super(props);
+        // this.Stocks = ['TSLA', 'BA', 'NKLA']
         this.state ={
             message: "",
             isLoading : true,
@@ -54,10 +55,11 @@ class Stock extends Component {
 
             .catch((error) =>{
                 console.log(error)
+
             })
             
     }
-    
+
 
     async remove(id){
         await fetch(`/api/stocks/${id}`,{
@@ -71,8 +73,6 @@ class Stock extends Component {
             this.setState({Stocks : updatedStocks});
         });
     }
-    
-
     render() { 
         const {Stocks, currentPrices,isLoading} = this.state;
         if(isLoading)
@@ -123,6 +123,8 @@ class Stock extends Component {
                             
 
                         </Table>
+                        {/* <div>{allStockTickers}</div> */}
+                        {/* <div>{allCurrentPrices}</div> */}
                     </Container>
 
                 </div>

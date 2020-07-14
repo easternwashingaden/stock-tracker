@@ -5,15 +5,11 @@ import {Table} from 'reactstrap';
 import Moment from 'react-moment';
 import { Button, Container } from 'reactstrap';
 import axios from 'axios';
-
-
- 
 import "react-datepicker/dist/react-datepicker.css";
 
 class Stock extends Component {
     constructor(props){
         super(props);
-        // this.Stocks = ['TSLA', 'BA', 'NKLA']
         this.state ={
             message: "",
             isLoading : true,
@@ -31,6 +27,10 @@ class Stock extends Component {
 
     async componentDidMount(){
         await this.getStockArray();
+        const response = await fetch('/api/stocks');
+        const body= await response.json();
+        this.setState({Stocks : body, isLoading : false});
+
     }
 
     async loadPrices(tickers){
@@ -44,35 +44,28 @@ class Stock extends Component {
                         const allPrices = element.data['Time Series (Daily)'][key]['4. close']; 
                         console.log(allPrices)
                         return allPrices
-        
                     }  
-        
-                })
-                
-                this.setState({ currentPrices: latestPrices, isLoading : false })
-               
+                })   
+                this.setState({ currentPrices: latestPrices, isLoading : false })   
             }))
 
             .catch((error) =>{
                 console.log(error)
 
-            })
-            
+            })        
     }
-
 
     async remove(id){
-        await fetch(`/api/stocks/${id}`,{
-            method: 'DELETE',
-            headers: {
-            'Accept': 'applicaion/json',
-            'Content-Type' : 'application/json'
-            }
-        }).then(()=>{
+        axios.delete(`/api/stock/${id}`)
+        .then((response)=>{
             let updatedStocks = [...this.state.Stocks].filter(i => i.id !== id);
             this.setState({Stocks : updatedStocks});
-        });
+        })
+        .catch((error) =>{
+            console.log(error);
+        })
     }
+
     render() { 
         const {Stocks, currentPrices,isLoading} = this.state;
         if(isLoading)
@@ -81,15 +74,14 @@ class Stock extends Component {
         let rows = 
         Stocks.map((stock, i) =>
             <tr key = {stock.id} >
-            <td>{stock.id}</td>
             <td>{stock.ticker}</td>
             <td>{stock.share}</td>
-            <td>{stock.price}</td>
-            <td>{currentPrices[i]}</td>
-            <td>{currentPrices[i] - stock.price}</td>
-            <td>{stock.price}</td>
-            <td>{stock.price}</td>
-            <td>{stock.price}</td>
+            <td>${stock.price}</td>
+            <td>${currentPrices[i]}</td>
+            <td>${(stock.share * parseFloat(stock.price)).toFixed(2)}</td>
+            <td>{(stock.share * parseFloat(currentPrices[i])).toFixed(2)}</td>
+            <td>${(currentPrices[i] - stock.price).toFixed(2)}</td>
+            <td>{((parseFloat(currentPrices[i])/parseFloat(stock.price))/((stock.share * parseFloat(stock.price)).toFixed(2)))}</td>
             <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
             <td><Button size= 'sm' color='danger' onClick={()=> this.remove(stock.id)}>Delete</Button></td>
             </tr>
@@ -104,15 +96,14 @@ class Stock extends Component {
                         <Table className= 'mt-4 table-hover'>
                             <thead className="thead-light">
                             <tr>
-                                <th>Id</th>
                                 <th>Ticker</th>
                                 <th>Share</th>
                                 <th>Purchased Price</th>
                                 <th>Current Price</th>
-                                <th>Total Gain/Loss</th>
-                                <th>%Gain/Loss</th>
-                                <th>Total Equity</th>
                                 <th>Total Cost</th>
+                                <th>Total Equity</th>
+                                <th>Gain/Loss</th>
+                                <th>%Gain/Loss</th>
                                 <th>Purchased Date</th>
                                 <th>Action</th>
                             </tr>
@@ -120,11 +111,7 @@ class Stock extends Component {
                             <tbody>
                                 {rows}
                             </tbody>
-                            
-
                         </Table>
-                        {/* <div>{allStockTickers}</div> */}
-                        {/* <div>{allCurrentPrices}</div> */}
                     </Container>
 
                 </div>

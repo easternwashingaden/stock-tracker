@@ -79,9 +79,10 @@ class Stock extends Component {
             <td>${stock.price}</td>
             <td>${currentPrices[i]}</td>
             <td>${(stock.share * parseFloat(stock.price)).toFixed(2)}</td>
-            <td>{(stock.share * parseFloat(currentPrices[i])).toFixed(2)}</td>
+            <td>${(stock.share * parseFloat(currentPrices[i])).toFixed(2)}</td>
             <td>${(currentPrices[i] - stock.price).toFixed(2)}</td>
-            <td>{((parseFloat(currentPrices[i])/parseFloat(stock.price))/((stock.share * parseFloat(stock.price)).toFixed(2)))}</td>
+            <td>%{((parseFloat(currentPrices[i])/parseFloat(stock.price) - 1)*100).toFixed(2)}</td>
+            {/* <td>{((parseFloat(currentPrices[i]) - parseFloat(stock.price)/(stock.share * stock.price))).toFixed(2)}</td> */}
             <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
             <td><Button size= 'sm' color='danger' onClick={()=> this.remove(stock.id)}>Delete</Button></td>
             </tr>

@@ -4,6 +4,7 @@ import Home from './Home';
 import StockPerformance from './StockPerformance';
 import StockForm from './StockForm';
 import {Route, BrowserRouter as Router, Switch} from 'react-router-dom'
+import Portfolio from './Portfolio';
 
 class App extends Component {
   state = {  }
@@ -12,6 +13,7 @@ class App extends Component {
       <Router>
         <Switch>
           <Route path='/'exact={true} component={Home}/>
+          <Route path='/portfolio' exact={true} component={Portfolio}/>
           <Route path='/stocks' exact={true} component={Stock}/>
           <Route path='/stock' exact={true} component={StockForm}/>
           <Route path='/stockperformance' exact={true} component={StockPerformance}/>

@@ -2,18 +2,18 @@ import React, { Component } from 'react';
 import DatePicker from "react-datepicker";
 import './App.css'
 import AppNav from './AppNav';
-import Stock from './Stock';
-import {Form, FormGroup, Button, Container, lable, input } from 'reactstrap'
+import {Form, FormGroup, Button, Container } from 'reactstrap'
 import {Link} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Table} from 'reactstrap';
-import Moment from 'react-moment';
+import axios from 'axios';
+
 class StockForm extends Component {
   emptyItem = {
-    id: '103',
+    price: null,
     purchasedDate : new Date(),
-    share: 100,
-    purchasedPrice: 350,
+    share: null,
+    ticker: "",
+    
     users: [2,"Aden","Aden@john.com"]
   }
 
@@ -31,19 +31,26 @@ class StockForm extends Component {
   }
   
   async handleSumbit(event){
-    event.preventDefault();
+    
     const {item} = this.state;
-    await fetch(`/api/stocks`, {
-      method : 'POST',
-      headers: {
-        'Accept' : 'application/json',
-        'Content-Type' : 'application/json'
-      },
-      body :JSON.stringify(item),
+    axios.post(`/api/stocks`, item)
+    .then((response) => {
+      const updatedData = this.state.Stocks;
+      updatedData.push(response.data);
+      this.setState({
+        Stocks: updatedData
+      })
+
+    })
+
+    .catch((error) =>{
+      console.log(error.message)
     });
+
+    event.preventDefault();
     console.log(this.state);
-    this.props.history.push('/stocks')
-    console.log('successfully added')
+    this.props.history.push('/stocks');
+    console.log('successfully added');
     
   }
 
@@ -63,24 +70,16 @@ class StockForm extends Component {
     this.setState({item});
     console.log(item)
   }
-
-  async remove(id){
-    await fetch(`/api/stocks/${id}`,{
-      method: 'DELETE',
-      headers: {
-        'Accept': 'applicaion/json',
-        'Content-Type' : 'application/json'
-      }
-    }).then(()=>{
-      let updatedStocks = [...this.state.Stocks].filter(i => i.id !== id);
-      this.setState({Stocks : updatedStocks});
-    });
-  }
   async componentDidMount(){
     const response = await fetch('/api/stocks');
     const body= await response.json();
     this.setState({Stocks : body, isLoading : false});
-  }
+
+    const responseStocks= await fetch('/api/stocks');
+    const bodyStocks = await responseStocks.json();
+    this.setState({Stock : bodyStocks , isLoading :false});
+    console.log(bodyStocks);
+}
 
  
   render() { 
@@ -107,11 +106,11 @@ class StockForm extends Component {
             <Form onSubmit={this.handleSumbit}>
               <FormGroup>
                 <lable for='ticker'>Ticker</lable>
-                <select className = "form-control">
+                {/* <select className = "form-control">
                   {optionList}
-                </select>
+                </select> */}
                 
-                {/* <input type='text' name='ticker' id='ticker' className = "form-control" onChange={this.handleChange} autoComplete='name'/> */}
+                <input type='text' name='ticker' id='ticker' className = "form-control" onChange={this.handleChange}/>
               </FormGroup>
 
               <FormGroup>
@@ -120,8 +119,8 @@ class StockForm extends Component {
               </FormGroup>
 
               <FormGroup>
-                <lable for='purchasedPrice'>Purchased Price</lable>
-                <input type='text' name='purchasedPrice' id='purchasedPrice' className = "form-control" onChange={this.handleChange}/>
+                <lable for='price'>Purchased Price</lable>
+                <input type='text' name='price' id='price' className = "form-control" onChange={this.handleChange}/>
               </FormGroup>
 
               <div className='row'>

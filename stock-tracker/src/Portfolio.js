@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import AppNav from './AppNav';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Table} from 'reactstrap';
-import Moment from 'react-moment';
-import { Button, Container } from 'reactstrap';
+import './Portfolio.css';
+import { Button, Container, Form, FormGroup } from 'reactstrap';
 import axios from 'axios';
 import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-datepicker";
+import {Link} from 'react-router-dom';
 
 class Portfolio extends Component {
     constructor(props){
@@ -74,46 +76,87 @@ class Portfolio extends Component {
         let rows = 
         Stocks.map((stock, i) =>
             <tr key = {stock.id} >
-            <td>{stock.ticker}</td>
-            <td>{stock.share}</td>
-            <td>${stock.price}</td>
-            <td>${currentPrices[i]}</td>
-            <td>${(stock.share * parseFloat(stock.price)).toFixed(2)}</td>
-            <td>${(stock.share * parseFloat(currentPrices[i])).toFixed(2)}</td>
-            <td>${(currentPrices[i] - stock.price).toFixed(2)}</td>
-            <td>%{((parseFloat(currentPrices[i])/parseFloat(stock.price) - 1)*100).toFixed(2)}</td>
-            {/* <td>{((parseFloat(currentPrices[i]) - parseFloat(stock.price)/(stock.share * stock.price))).toFixed(2)}</td> */}
-            <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
-            <td><Button size= 'sm' color='danger' onClick={()=> this.remove(stock.id)}>Delete</Button></td>
+              <td>{stock.ticker}</td>
+              <td>{stock.share}</td>
+              <td>${currentPrices[i]}</td>
+              <td>${(stock.share * parseFloat(currentPrices[i])).toFixed(2)}</td>
             </tr>
             )
           
         return (
             <section>
                 <div>
-                    <AppNav/>
-                    <Container style = {{margin: '2rem'}}>
-                        <h3>Stock Collection</h3>
-                        <Table className= 'mt-4 table-hover'>
-                            <thead className="thead-light">
-                            <tr>
-                                <th>Ticker</th>
-                                <th>Share</th>
-                                <th>Purchased Price</th>
-                                <th>Current Price</th>
-                                <th>Total Cost</th>
-                                <th>Total Equity</th>
-                                <th>Gain/Loss</th>
-                                <th>%Gain/Loss</th>
-                                <th>Purchased Date</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {rows}
-                            </tbody>
-                        </Table>
-                    </Container>
+                  <AppNav/>
+                  <h3>Stock Collection</h3>
+                  <h5 style = {{textAlign: 'center'}}>Portfolio(Value:)</h5>
+                  <br></br>
+                  <br></br>
+                  <div className = "container">
+                    <div className="row">
+                      <div className="col">
+                        <Container className = "border-right">
+                        <div className="table-responsive">
+                          <Table className= 'table table-striped table-hover center'>
+                              <thead style = {{background: "lightseagreen"}}>
+                              <tr>
+                                  <th>Ticker</th>
+                                  <th>Share</th>
+                                  <th>Price</th>
+                                  <th>Total Equity</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                                  {rows}
+                              </tbody>
+                            </Table>
+                          </div>
+                        </Container>
+                      </div>
+                      <div className="col card" style = {{marginRight: '2em'}}>
+                        <h5 className="card-header info-color white-text text-center py-4" style = {{background: "lightseagreen"}}>
+                          <strong>Add Stock</strong>
+                        </h5>
+                        <div className = "card-body px-lg-5">
+                        <Container>
+                    
+                          <Form onSubmit={this.handleSumbit}>
+                            <FormGroup className= "md-form mt-3">
+                              <lable for='ticker'>Ticker</lable>
+                              {/* <select className = "form-control">
+                                {optionList}
+                              </select> */}
+                              
+                              <input type='text' name='ticker' id='ticker' className = "form-control" onChange={this.handleChange}/>
+                            </FormGroup>
+
+                            <FormGroup className="form-row">
+                              <lable for='share'>Share</lable>
+                              <input type='text' name='share' id='share' className = "form-control" onChange={this.handleChange}/>
+                            </FormGroup>
+
+                            <FormGroup className="form-row">
+                              <lable for='price'>Purchased Price</lable>
+                              <input type='text' name='price' id='price' className = "form-control" onChange={this.handleChange}/>
+                            </FormGroup>
+
+                            <div className='row'>
+                            <FormGroup className='col-md-4 mb-3'>
+                              <lable for='purcashedDate'>Purchased Date</lable>
+                              {/* <DatePicker selected={this.state.item.purchasedDate} className = "form-control" onChange={this.handleChange}/> */}
+                            </FormGroup>
+                            </div>
+                              <Button color='primary' type='submit'>Save </Button>{' '}
+                              <Button color='secondary' tag={Link} to = '/stocks'>Cancel</Button>
+                          </Form>
+
+                        </Container>
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </div>
+                    
 
                 </div>
             </section>

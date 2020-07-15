@@ -23,6 +23,9 @@ class AppNav extends Component {
                                 <NavLink href="/stock">Add Stock</NavLink>
                             </NavItem>
                             <NavItem>
+                                <NavLink href="/history">Capital History</NavLink>
+                            </NavItem>
+                            <NavItem>
                                 <NavLink href="/stockperformance">Stock Performance</NavLink>
                             </NavItem>
                         </Nav>

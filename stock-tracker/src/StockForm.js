@@ -22,7 +22,7 @@ class StockForm extends Component {
     this.state = {
         isLoading : true,
         Stocks : [],
-        date : new Date(),
+        purchasedDate : new Date(),
         item : this.emptyItem
     }
     this.handleSumbit = this.handleSumbit.bind(this);
@@ -126,8 +126,7 @@ class StockForm extends Component {
               <div className='row'>
               <FormGroup className='col-md-4 mb-3'>
                 <lable for='purcashedDate'>Purchased Date</lable>
-                <DatePicker selected={this.state.item.purchasedDate} className = "form-control" onChange={this.handleDateChange} />
-              </FormGroup>
+                <DatePicker selected={this.state.item.purchasedDate} className = "form-control" onChange={this.handleChange}/>              </FormGroup>
               </div>
                 <Button color='primary' type='submit'>Save </Button>{' '}
                 <Button color='secondary' tag={Link} to = '/stocks'>Cancel</Button>

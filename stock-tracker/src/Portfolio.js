@@ -8,8 +8,10 @@ import axios from 'axios';
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import {Link} from 'react-router-dom';
+import Chart from "react-apexcharts";
 
 class Portfolio extends Component {
+
     constructor(props){
         super(props);
         this.state ={
@@ -17,22 +19,63 @@ class Portfolio extends Component {
             isLoading : true,
             currentPrices : [],
             results : [],
-            Stocks : []
-        }
+            Stocks : [], 
+            options: {
+              chart: {
+                id: "basic-bar"
+              },
+              xaxis: {
+                //Stocktickers
+                categories: []
+              }
+            },
+            series: [
+              {
+                //value = share*price
+                name: "series-1",
+                data: []
+              }
+            ]
+  
+          }
     }
 
     async getStockArray(){
         const res = await axios.get('/api/stocks');
         this.setState({Stocks: res.data});
-        await this.loadPrices(res.data)   
+        await this.loadPrices(res.data);
+        await this.getStockTickers(res.data);
+        await this.getTotalCosts(res.data);
     }
 
     async componentDidMount(){
+
         await this.getStockArray();
         const response = await fetch('/api/stocks');
         const body= await response.json();
-        this.setState({Stocks : body, isLoading : false});
+        this.setState({Stocks : body, isLoading : false });
+    }
 
+    getStockTickers(Stocks){
+      let tickerList = Stocks.map((stock) =>{
+        return stock.ticker
+      })
+
+      console.log(tickerList)
+      this.setState ({ categories: tickerList});  
+      console.log(this.categories)
+      
+    }
+
+    getTotalCosts(Stocks){
+      let totalCosts = Stocks.map((stock) =>{
+        return (parseFloat(stock.price) * stock.share)
+      })
+
+      console.log(totalCosts)
+      this.setState ({data : totalCosts});  
+      console.log(this.data)
+      
     }
 
     async loadPrices(tickers){
@@ -69,10 +112,10 @@ class Portfolio extends Component {
     }
 
     render() { 
-        const {Stocks, currentPrices,isLoading} = this.state;
+        const {Stocks, categories, currentPrices,isLoading} = this.state;
         if(isLoading)
             return(<div>Loading...</div>)
-        
+
         let rows = 
         Stocks.map((stock, i) =>
             <tr key = {stock.id} >
@@ -150,6 +193,18 @@ class Portfolio extends Component {
                           </Form>
 
                         </Container>
+                        <div className="app">
+                          <div className="row">
+                            <div className="mixed-chart">
+                              <Chart
+                                options={this.state.options}
+                                series={this.state.series}
+                                type="bar"
+                                width="500"
+                              />
+                        </div>
+                       </div>
+      </div>
                         </div>
                       </div>
                     </div>

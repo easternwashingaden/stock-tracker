@@ -19,7 +19,7 @@ class Stock extends Component {
         purchasedDate : new Date(),
         soldPrice: null, 
         soldDate: new Date(),
-        users: [2,"Aden","Aden@john.com"]
+        user: [2,"Aden","Aden@john.com"]
       }
     emptyItem = {
         price: null,
@@ -39,15 +39,21 @@ class Stock extends Component {
             selectedStock: this.emptyItem,
             isAddSaleFormOpen: false,
             item: this.emptySaleItem,
-            date : new Date()
+            date : new Date(),
+            isInEditMode: false,
+            editingItem: this.emptyItem
         }
         this.onSaleButtonClick = this.onSaleButtonClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
         this.onAddToSaleButtonClick = this.onAddToSaleButtonClick.bind(this)
+        this.onClickEditButton = this.onClickEditButton.bind(this)
+        this.handleEdit = this.handleEdit.bind(this)
+        this.handleEditChange = this.handleEditChange.bind(this)
+
     }
     
-    async onSaleButtonClick(stock){ 
+    onSaleButtonClick(stock){ 
         const clickedStock = {
             id:stock.id,
             price: stock.price,
@@ -59,25 +65,40 @@ class Stock extends Component {
             user: null,
             date : new Date()
         }
-    //     axios.post(`/api/sales`, clickedStock)
-    //     .then((response) => {
-    //     const updatedData = this.state.Sales;
-    //     updatedData.push(response.data);
-    //     this.setState({
-    //         Sales: updatedData
-    //     })
-
-    //     })
-
-    //    .catch((error) =>{
-    //         console.log(error.message)
-    //       });
-    //     this.remove(stock.id)
 
         this.setState({ isAddSaleFormOpen: true, selectedStock: stock, item : clickedStock })
             console.log(this.selectedStock)
             console.log(stock)
             console.log('successfully added');
+    }
+
+    onClickEditButton(stock){
+        
+        this.setState({ 
+            isInEditMode : true,
+            editingItem: stock
+        })
+        
+        console.log(stock)
+    }
+
+    handleEdit(){
+        const {editingItem} = this.state;
+        axios.put(`/api/stock/${editingItem.id}`, editingItem)
+        .then((response) =>{
+            const updatedData = this.state.Stocks;
+                updatedData.push(response.data);
+                this.setState({
+                Stock: updatedData,
+                isInEditMode : false
+                })
+                console.log("Updated successfully")
+        })
+        .catch((error) =>{
+            console.log(error.message)
+        })
+        
+        
     }
 
     onAddToSaleButtonClick(item){ 
@@ -99,7 +120,6 @@ class Stock extends Component {
           });
         this.remove(item.id)
         
-        console.log('successfully added');
     }
 
     async getStockArray(){
@@ -142,18 +162,7 @@ class Stock extends Component {
         let item={...this.state.item};
         item.soldDate = date;
         this.setState({item});
-      }
-
-    // async getMoreInfoForSale(item){
-    //     axios.post(`/api/sales`, item)
-    //     .then((response)=>{
-    //         let updatedStocks = [...this.state.Stocks].filter(i => i.id !== id);
-    //         this.setState({Stocks : updatedStocks});
-    //     })
-    //     .catch((error) =>{
-    //         console.log(error);
-    //     })
-    // }
+    }
 
     handleChange(event){
         const target = event.target;
@@ -165,6 +174,17 @@ class Stock extends Component {
         console.log(this.state)
       }
     
+
+    handleEditChange(event){
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        let editingItem={...this.state.editingItem};
+        editingItem[name]= value;
+        this.setState({editingItem});
+        console.log(this.state)
+    
+      }
     async remove(id){
         axios.delete(`/api/stock/${id}`)
         .then((response)=>{
@@ -176,8 +196,47 @@ class Stock extends Component {
         })
     }
 
+    renderEditView(){
+        const {editingItem} = this.state;
+        
+        return(<Container>
+            <h4>Edit Stock</h4>
+
+            <Form onSubmit={this.handleEdit}>
+              <FormGroup>
+                <lable for='ticker'>Ticker</lable>
+                
+                <input type='text' value = {editingItem.ticker} name='ticker' id='ticker' className = "form-control" onChange={this.handleEditChange}/>
+              </FormGroup>
+
+              <FormGroup>
+                <lable for='share'>Share</lable>
+                <input type='text' value = {editingItem.share} name='share' id='share' className = "form-control" onChange={this.handleEditChange}/>
+              </FormGroup>
+
+              <FormGroup>
+                <lable for='price'>Purchased Price</lable>
+                <input type='text' value = {editingItem.price} name='price' id='price' className = "form-control" onChange={this.handleEditChange}/>
+              </FormGroup>
+
+              <div className='row'>
+              <FormGroup className='col-md-4 mb-3'>
+                <lable for='purchasedDate'>Purchased Date</lable>
+                {/* <DatePicker selected={this.state.emptyItem.purchasedDate} className = "form-control" onChange={this.handleDateChange} /> */}
+                {/* <DatePicker selected={editingItem.purchasedDate} className = "form-control" onChange={this.handleDateChange} /> */}
+                <input type='text' value = {editingItem.purchasedDate} name = 'purchasedDate' id='purchasedDate' className = "form-control" onChange={this.handleEditChange}/>
+              </FormGroup>
+              </div>
+                <Button color='primary' type='submit'>Save </Button>{' '}
+                <Button color='secondary' onClick ={(e)=> this.setState({isInEditMode: false})}>Cancel</Button>
+            </Form>
+
+          </Container>
+        )
+
+    }
     render() { 
-        const {Stocks, selectedStock, item, currentPrices,isLoading} = this.state;
+        const {Stocks, selectedStock, editItem, item, currentPrices,isLoading} = this.state;
         if(isLoading)
             return(<div>Loading...</div>)
         
@@ -195,11 +254,15 @@ class Stock extends Component {
             {/* <td>{((parseFloat(currentPrices[i]) - parseFloat(stock.price)/(stock.share * stock.price))).toFixed(2)}</td> */}
             <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
             <Button size= 'sm' color='danger' onClick={()=> this.remove(stock.id)}>Delete</Button>
+            <Button size= 'sm' color='primary' onClick={this.onClickEditButton.bind(this, stock)}>Edit</Button>
             <Button size= 'sm' color='success' onClick= {this.onSaleButtonClick.bind(this, stock)}>Sale</Button>
             </tr>
             )
           
         return (
+            this.state.isInEditMode ? 
+            this.renderEditView() 
+            :
             <section>
                 <div>
                     <AppNav/>
@@ -210,10 +273,10 @@ class Stock extends Component {
                             <tr>
                                 <th>Ticker</th>
                                 <th>Share</th>
-                                <th className="w-auto p-3">Purchased Price</th>
-                                <th className="w-auto p-3">Current Price</th>
-                                <th className="w-auto p-3">Total Cost</th>
-                                <th className="w-auto p-3">Total Equity</th>
+                                <th>Purchased Price</th>
+                                <th>Current Price</th>
+                                <th>Total Cost</th>
+                                <th>Total Equity</th>
                                 <th>Gain/Loss</th>
                                 <th>%Gain/Loss</th>
                                 <th className="w-auto p-3">Purchased Date</th>
@@ -254,7 +317,7 @@ class Stock extends Component {
                             <div className='row'>
                             <FormGroup className='col-md-4 mb-3'>
                                 <lable for='purcashedDate'>Purchased Date</lable>
-                                <input type='text' value = {selectedStock.purchasedDate} name = 'purchasedDate' id='purchasedDate' id='purchasedDate' className = "form-control"/>
+                                <input type='text' value = {selectedStock.purchasedDate} name = 'purchasedDate' id='purchasedDate' className = "form-control"/>
                             </FormGroup>
 
                             <FormGroup className='col-md-4 mb-3'>
@@ -263,7 +326,7 @@ class Stock extends Component {
                                 <DatePicker selected={this.state.item.soldDate} className = "form-control" onChange={this.handleDateChange} />
                             </FormGroup>
                             </div>
-                                <Button color='primary' type='submit'>Save </Button>{' '}
+                                <Button color='primary' type='submit'> Save </Button>{' '}
                                 <Button color='secondary'onClick ={(e)=> this.setState({isAddSaleFormOpen: false})}>Cancel</Button>
                             </Form>
 

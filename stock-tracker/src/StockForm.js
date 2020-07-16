@@ -13,8 +13,7 @@ class StockForm extends Component {
     purchasedDate : new Date(),
     share: null,
     ticker: "",
-    
-    users: [2,"Aden","Aden@john.com"]
+    user: null
   }
 
   constructor(props){
@@ -22,7 +21,7 @@ class StockForm extends Component {
     this.state = {
         isLoading : true,
         Stocks : [],
-        purchasedDate : new Date(),
+        date : new Date(),
         item : this.emptyItem
     }
     this.handleSumbit = this.handleSumbit.bind(this);
@@ -68,7 +67,6 @@ class StockForm extends Component {
     let item={...this.state.item};
     item.purchasedDate = date;
     this.setState({item});
-    console.log(item)
   }
   async componentDidMount(){
     const response = await fetch('/api/stocks');
@@ -126,7 +124,8 @@ class StockForm extends Component {
               <div className='row'>
               <FormGroup className='col-md-4 mb-3'>
                 <lable for='purcashedDate'>Purchased Date</lable>
-                <DatePicker selected={this.state.item.purchasedDate} className = "form-control" onChange={this.handleChange}/>              </FormGroup>
+                <DatePicker selected={this.state.item.purchasedDate} className = "form-control" onChange={this.handleDateChange}/>              
+              </FormGroup>
               </div>
                 <Button color='primary' type='submit'>Save </Button>{' '}
                 <Button color='secondary' tag={Link} to = '/stocks'>Cancel</Button>

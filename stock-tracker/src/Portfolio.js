@@ -8,37 +8,29 @@ import axios from 'axios';
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import {Link} from 'react-router-dom';
-import Chart from "react-apexcharts";
+import  Chart from "react-apexcharts";
 
 class Portfolio extends Component {
 
     constructor(props){
         super(props);
         this.state ={
-            message: "",
-            isLoading : true,
-            currentPrices : [],
-            results : [],
-            Stocks : [], 
-            options: {
-              chart: {
-                id: "basic-bar"
-              },
-              xaxis: {
-                //Stocktickers
-                categories: []
-              }
-            },
-            series: [
-              {
-                //value = share*price
-                name: "series-1",
-                data: []
-              }
-            ]
-  
-          }
+          message: "",
+          isLoading : true,
+          currentPrices : [],
+          results : [],
+          Stocks : [], 
+          options: {},
+          series: [],
+          options: {
+           labels: [],     
+        }
+      
+      } 
     }
+
+
+    
 
     async getStockArray(){
         const res = await axios.get('/api/stocks');
@@ -56,25 +48,25 @@ class Portfolio extends Component {
         this.setState({Stocks : body, isLoading : false });
     }
 
-    getStockTickers(Stocks){
-      let tickerList = Stocks.map((stock) =>{
-        return stock.ticker
-      })
-
-      console.log(tickerList)
-      this.setState ({ categories: tickerList});  
-      console.log(this.categories)
-      
-    }
-
     getTotalCosts(Stocks){
       let totalCosts = Stocks.map((stock) =>{
         return (parseFloat(stock.price) * stock.share)
       })
 
       console.log(totalCosts)
-      this.setState ({data : totalCosts});  
-      console.log(this.data)
+      this.setState ({series: totalCosts});  
+      console.log(this.series)
+      
+    }
+
+    getStockTickers(Stocks){
+      let tickerList = Stocks.map((stock) =>{
+        return stock.ticker
+      })
+
+      console.log(tickerList)
+      this.setState ({ labels: tickerList});  
+      console.log(this.categories)
       
     }
 
@@ -112,7 +104,7 @@ class Portfolio extends Component {
     }
 
     render() { 
-        const {Stocks, categories, currentPrices,isLoading} = this.state;
+        const {Stocks, currentPrices,isLoading} = this.state;
         if(isLoading)
             return(<div>Loading...</div>)
 
@@ -121,8 +113,10 @@ class Portfolio extends Component {
             <tr key = {stock.id} >
               <td>{stock.ticker}</td>
               <td>{stock.share}</td>
+              <td>${parseFloat(stock.price).toFixed(2)}</td>
               <td>${currentPrices[i]}</td>
               <td>${(stock.share * parseFloat(currentPrices[i])).toFixed(2)}</td>
+              <td>${(stock.share * parseFloat(stock.price)).toFixed(2)}</td>
             </tr>
             )
           
@@ -136,7 +130,7 @@ class Portfolio extends Component {
                   <br></br>
                   <div className = "container">
                     <div className="row">
-                      <div className="col">
+                      <div className="col-sm-8">
                         <Container className = "border-right">
                         <div className="table-responsive">
                           <Table className= 'table table-striped table-hover center'>
@@ -144,8 +138,10 @@ class Portfolio extends Component {
                               <tr>
                                   <th>Ticker</th>
                                   <th>Share</th>
-                                  <th>Price</th>
+                                  <th>Purchased Price</th>
+                                  <th>Current Price</th>
                                   <th>Total Equity</th>
+                                  <th>Total Cost</th>
                               </tr>
                               </thead>
                               <tbody>
@@ -155,64 +151,22 @@ class Portfolio extends Component {
                           </div>
                         </Container>
                       </div>
-                      <div className="col card" style = {{marginRight: '2em'}}>
+                      <div className=" col-6 col-md-4 card">
                         <h5 className="card-header info-color white-text text-center py-4" style = {{background: "lightseagreen"}}>
-                          <strong>Add Stock</strong>
+                          <strong>Purchased Stocks</strong>
                         </h5>
-                        <div className = "card-body px-lg-5">
-                        <Container>
-                    
-                          <Form onSubmit={this.handleSumbit}>
-                            <FormGroup className= "md-form mt-3">
-                              <lable for='ticker'>Ticker</lable>
-                              {/* <select className = "form-control">
-                                {optionList}
-                              </select> */}
-                              
-                              <input type='text' name='ticker' id='ticker' className = "form-control" onChange={this.handleChange}/>
-                            </FormGroup>
-
-                            <FormGroup className="form-row">
-                              <lable for='share'>Share</lable>
-                              <input type='text' name='share' id='share' className = "form-control" onChange={this.handleChange}/>
-                            </FormGroup>
-
-                            <FormGroup className="form-row">
-                              <lable for='price'>Purchased Price</lable>
-                              <input type='text' name='price' id='price' className = "form-control" onChange={this.handleChange}/>
-                            </FormGroup>
-
-                            <div className='row'>
-                            <FormGroup className='col-md-4 mb-3'>
-                              <lable for='purcashedDate'>Purchased Date</lable>
-                              {/* <DatePicker selected={this.state.item.purchasedDate} className = "form-control" onChange={this.handleChange}/> */}
-                            </FormGroup>
-                            </div>
-                              <Button color='primary' type='submit'>Save </Button>{' '}
-                              <Button color='secondary' tag={Link} to = '/stocks'>Cancel</Button>
-                          </Form>
-
-                        </Container>
-                        <div className="app">
-                          <div className="row">
-                            <div className="mixed-chart">
-                              <Chart
-                                options={this.state.options}
-                                series={this.state.series}
-                                type="bar"
-                                width="500"
-                              />
-                        </div>
-                       </div>
-      </div>
+                        <div>
+                          <div className="donut">
+                            <Chart 
+                              options={this.state.options} 
+                              series={this.state.series} 
+                              type="donut" 
+                              width="380" />
+                          </div>
                         </div>
                       </div>
                     </div>
-
-
                   </div>
-                    
-
                 </div>
             </section>
 

@@ -6,6 +6,8 @@ import {Form, FormGroup, Button, Container } from 'reactstrap'
 import {Link} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
+import AddSuccessAlert from './AddSuccessAlert';
+import AddFailureAlert from './AddFailureAlert';
 
 class StockForm extends Component {
   emptyItem = {
@@ -22,7 +24,8 @@ class StockForm extends Component {
         isLoading : true,
         Stocks : [],
         date : new Date(),
-        item : this.emptyItem
+        item : this.emptyItem,
+        alert_message: "",
     }
     this.handleSumbit = this.handleSumbit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -37,20 +40,23 @@ class StockForm extends Component {
       const updatedData = this.state.Stocks;
       updatedData.push(response.data);
       this.setState({
-        Stocks: updatedData
+        Stocks: updatedData,
+        alert_message: "success"
       })
-
+      
     })
 
     .catch((error) =>{
-      console.log(error.message)
+      this.setState({alert_message : "error"})
     });
 
     event.preventDefault();
-    console.log(this.state);
-    this.props.history.push('/stocks');
-    console.log('successfully added');
-    
+    // console.log(this.state);
+    // this.props.history.push('/stocks');
+    // console.log(this.Stocks)
+    event.target.reset(); 
+
+       
   }
 
   handleChange(event){
@@ -87,17 +93,20 @@ class StockForm extends Component {
     if (isLoading)
       return(<div>Loading...</div>)
 
-    let optionList =
-      Stocks.map(stock =>
-        <option value = {stock.id} key = {stock.id}>
-          {stock.ticker}
-        </option>
-      )
+    // let optionList =
+    //   Stocks.map(stock =>
+    //     <option value = {stock.id} key = {stock.id}>
+    //       {stock.ticker}
+    //     </option>
+    //   )
     
     return (
       <section>
         <div>
           <AppNav/>
+          <hr />
+          {this.state.alert_message === "success" ? <AddSuccessAlert/> : null}
+          {this.state.alert_message === "error" ? <AddFailureAlert/> : null}
           <Container>
             {title}
 

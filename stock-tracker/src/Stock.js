@@ -10,7 +10,9 @@ import {Form, FormGroup, Button, Container } from 'reactstrap'
 import {Link} from 'react-router-dom';
 import DatePicker from "react-datepicker";
 import './App.css'
-
+import DeleteSuccessAlert from './DeleteSuccessAlert';
+import AddToSaleListSuccessAlert from './AddToSaleListSuccessAlert';
+import UpdateSuccessAlert from './UpdateSuccessAlert'
 class Stock extends Component {
     emptySaleItem = {
         ticker: "",
@@ -41,7 +43,11 @@ class Stock extends Component {
             item: this.emptySaleItem,
             date : new Date(),
             isInEditMode: false,
-            editingItem: this.emptyItem
+            editingItem: this.emptyItem,
+            date : new Date(),
+            alertMessage: "",
+            alertMessageForSale: "",
+            alertUpdateMessage: ""
         }
         this.onSaleButtonClick = this.onSaleButtonClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -63,7 +69,7 @@ class Stock extends Component {
             soldPrice: null, 
             soldDate: null,
             user: null,
-            date : new Date()
+            
         }
 
         this.setState({ isAddSaleFormOpen: true, selectedStock: stock, item : clickedStock })
@@ -90,15 +96,17 @@ class Stock extends Component {
                 updatedData.push(response.data);
                 this.setState({
                 Stock: updatedData,
-                isInEditMode : false
-                })
-                console.log("Updated successfully")
+                isInEditMode : false,
+                alertUpdateMessage: "success"
+                
+            })
         })
         .catch((error) =>{
-            console.log(error.message)
+            this.setState({
+                alertUpdateMessage: "error"
+            })
         })
-        
-        
+        // this.setState({alertUpdateMessage: "success"})
     }
 
     onAddToSaleButtonClick(item){ 
@@ -111,6 +119,7 @@ class Stock extends Component {
         updatedData.push(response.data);
         this.setState({
             Sales: updatedData
+            
         })
 
         })
@@ -119,7 +128,7 @@ class Stock extends Component {
             console.log(error.message)
           });
         this.remove(item.id)
-        
+        this.setState({alertMessageForSale : "success"});   
     }
 
     async getStockArray(){
@@ -173,7 +182,6 @@ class Stock extends Component {
         this.setState({item});
         console.log(this.state)
       }
-    
 
     handleEditChange(event){
         const target = event.target;
@@ -189,7 +197,10 @@ class Stock extends Component {
         axios.delete(`/api/stock/${id}`)
         .then((response)=>{
             let updatedStocks = [...this.state.Stocks].filter(i => i.id !== id);
-            this.setState({Stocks : updatedStocks});
+            this.setState({
+                Stocks : updatedStocks,
+                alertMessage: 'success'
+            });
         })
         .catch((error) =>{
             console.log(error);
@@ -266,6 +277,10 @@ class Stock extends Component {
             <section>
                 <div>
                     <AppNav/>
+                    <br></br>
+                    {this.state.alertUpdateMessage === "success" ? <UpdateSuccessAlert/> : null}
+                    {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
+                    {this.state.alertMessageForSale === "success" ? <AddToSaleListSuccessAlert/> : null}
                     <Container className = "center" style = {{margin: '2rem'}}>
                         <h3>Stock Collection</h3>
                         <Table className= 'table table-striped table-hover center'>
@@ -329,8 +344,6 @@ class Stock extends Component {
                                 <Button color='primary' type='submit'> Save </Button>{' '}
                                 <Button color='secondary'onClick ={(e)=> this.setState({isAddSaleFormOpen: false})}>Cancel</Button>
                             </Form>
-
-
                         </Container>
                     </AddSale>
                 </div>

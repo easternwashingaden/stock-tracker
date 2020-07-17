@@ -72,3 +72,12 @@ section{
 .card {
   width: 400pt;
 }
+
+.center {
+  text-align: center;
+  /* align-items: center;
+  justify-content: center; */
+  
+}
+
+

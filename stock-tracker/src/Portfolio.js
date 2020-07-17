@@ -9,6 +9,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import {Link} from 'react-router-dom';
 import  Chart from "react-apexcharts";
+import Plot from 'react-plotly.js';
+
 
 class Portfolio extends Component {
 
@@ -21,16 +23,61 @@ class Portfolio extends Component {
           results : [],
           Stocks : [], 
           options: {},
+          isOnShowDetailMode: false,
+          stockChartXValues: [],
+          stockChartYValues: [],
+          hoveredStock: null,
           series: [],
           options: {
            labels: [],     
         }
+      }
+      this.handleHoverOn = this.handleHoverOn.bind(this); 
       
-      } 
     }
 
+  handleHoverOn(ticker){
+    // this.setState({hoveredStock : stock})
+    // const {hoveredStock} = this.state;
+   console.log(ticker)
 
-    
+    const pointerToThis = this;
+    // console.log(pointerToThis);
+    const API_KEY = '6D6O68MT7WRRNJOM';
+    const API_Call = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${ticker}&outputsize=compact&apikey=${API_KEY}`;
+    console.log(API_Call)
+    let stockChartXValuesFunction = [];
+    let stockChartYValuesFunction = [];
+
+    axios.get(API_Call)
+      .then ((res) => {
+        console.log(res);
+        console.log('successfully here');
+        
+        this.setState({
+          loading: false,
+        }); 
+        for (var key in res.data['Time Series (Daily)']) {
+          stockChartXValuesFunction.push(key);
+          stockChartYValuesFunction.push(res.data['Time Series (Daily)'][key]['4. close']);
+        }
+
+        console.log(stockChartYValuesFunction);
+          pointerToThis.setState({
+          stockChartXValues: stockChartXValuesFunction,
+          stockChartYValues: stockChartYValuesFunction
+        });
+      })
+      .catch((error) => {
+        if (axios.isCancel(error) || error) {
+          this.setState({
+            loading: false,
+            message: 'Failed to fetch results.Please check network',
+          });
+        }
+      });
+      this.setState({isOnShowDetailMode : true})
+    }
 
     async getStockArray(){
         const res = await axios.get('/api/stocks');
@@ -111,7 +158,7 @@ class Portfolio extends Component {
         let rows = 
         Stocks.map((stock, i) =>
             <tr key = {stock.id} >
-              <td>{stock.ticker}</td>
+              <td onMouseEnter = {this.handleHoverOn.bind(this, stock.ticker)}>{stock.ticker}</td>
               <td>{stock.share}</td>
               <td>${parseFloat(stock.price).toFixed(2)}</td>
               <td>${currentPrices[i]}</td>
@@ -124,7 +171,36 @@ class Portfolio extends Component {
             <section>
                 <div>
                   <AppNav/>
-                  <h3>Stock Collection</h3>
+                  <div>
+                  {this.state.isOnShowDetailMode && this.state.stockChartXValues && this.state.stockChartYValues.length  ?
+                  <div>
+                    <div className = "center">
+                      <Plot
+                        data={[
+                        {
+                          x: this.state.stockChartXValues,
+                          y: this.state.stockChartYValues,
+                          type: 'scatter',
+                          mode: 'lines+markers',
+                          marker: {color: 'red'},
+                        }
+                      ]}
+                        layout={{width: 720, height: 440, title: 'Stock Performance'}}
+                        
+                      />
+                      </div>
+                      <div className = "center"> 
+                        <Button className = "center" color='danger' style ={{textAlign: 'center'}} onClick ={(e)=> this.setState({isOnShowDetailMode: false})}>Close</Button> 
+                      </div>
+                    </div>
+                  : ""
+                  
+                  }
+                  
+                  </div>
+
+                  <br></br>
+                  <br></br>
                   <h5 style = {{textAlign: 'center'}}>Portfolio(Value:)</h5>
                   <br></br>
                   <br></br>

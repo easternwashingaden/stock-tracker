@@ -6,6 +6,7 @@ import Moment from 'react-moment';
 import { Button, Container, Table, Form, FormGroup  } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import DatePicker from "react-datepicker";
+import DeleteSuccessAlert from './DeleteSuccessAlert';
 
 class Sale extends Component {
   emptySaleItem = {
@@ -26,7 +27,8 @@ class Sale extends Component {
         selectedStock : null,
         isInEditMode: false,
         editingItem: this.emptySaleItem,
-        date: new Date()
+        date: new Date(),
+        alertMessage: ""
     }
     this.handleChange = this.handleChange.bind(this);
     this.updateItem = this.updateItem.bind(this);
@@ -60,7 +62,10 @@ class Sale extends Component {
     axios.delete(`/api/sale/${id}`)
     .then((response)=>{
         let updatedSales = [...this.state.Sales].filter(i => i.id !== id);
-        this.setState({Sales : updatedSales});
+        this.setState({
+          Sales : updatedSales,
+          alertMessage : "success"
+        });
     })
     .catch((error) =>{
         console.log(error);
@@ -181,6 +186,8 @@ class Sale extends Component {
           <section>
               <div>
                   <AppNav/>
+                  <br></br>
+                  {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
                   <Container className = "center" style = {{margin: '2rem'}}>
                       <h3>Stock Collection</h3>
                       <Table className= 'table table-striped table-hover center'>

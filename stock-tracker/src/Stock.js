@@ -282,9 +282,9 @@ class Stock extends Component {
                     {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
                     {this.state.alertMessageForSale === "success" ? <AddToSaleListSuccessAlert/> : null}
                     <Container className = "center" style = {{margin: '2rem'}}>
-                        <h3>Stock Collection</h3>
-                        <Table className= 'table table-striped table-hover center'>
-                            <thead className="w-auto p-3" style = {{background: "lightgray"}}>
+                        <h3>Stock Holdings</h3>
+                        <Table style = {{width: '120%'}}className= 'table table-striped table-hover center w-auto'>
+                            <thead style = {{background: "lightseagreen"}}>
                             <tr>
                                 <th>Ticker</th>
                                 <th>Share</th>
@@ -294,7 +294,7 @@ class Stock extends Component {
                                 <th>Total Equity</th>
                                 <th>Gain/Loss</th>
                                 <th>%Gain/Loss</th>
-                                <th className="w-auto p-3">Purchased Date</th>
+                                <th>Purchased Date</th>
                                 <th className = "w-100 p-3">Action</th>
                             </tr>
                             </thead>

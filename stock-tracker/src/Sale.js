@@ -7,6 +7,7 @@ import { Button, Container, Table, Form, FormGroup  } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import DatePicker from "react-datepicker";
 import DeleteSuccessAlert from './DeleteSuccessAlert';
+import './App.css'
 
 class Sale extends Component {
   emptySaleItem = {
@@ -151,7 +152,7 @@ class Sale extends Component {
         </FormGroup>
         </div>
           <Button color='primary' type='submit'> Save </Button>
-          <Button color='secondary'onClick ={(e)=> this.setState({isAddSaleFormOpen: false})}>Cancel</Button>
+          <Button color='secondary'onClick ={(e)=> this.setState({isInEditMode: false})}>Cancel</Button>
       </Form>
     </Container>
     )
@@ -172,7 +173,7 @@ class Sale extends Component {
             <td>${stock.soldPrice}</td>
             <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
             <td><Moment date = {stock.soldDate} format = "YYYY/MM/DD"/></td>
-            <td>${(stock.soldPrice - stock.price).toFixed(2)}</td>
+            <td>${((stock.soldPrice - stock.price)*stock.share).toFixed(2)}</td>
             <td>%{(((stock.soldPrice - stock.price)/stock.price)*100).toFixed(2) }</td>
             <Button size= 'sm' color='danger' onClick={()=> this.remove(stock.id)}>Delete</Button>
             <Button size= 'sm' color='primary' onClick={this.onClickEditButton.bind(this, stock)}>Edit</Button>
@@ -184,12 +185,13 @@ class Sale extends Component {
           this.renderEditView() 
           :  
           <section>
-              <div>
+              <div >
                   <AppNav/>
                   <br></br>
                   {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
                   <Container className = "center" style = {{margin: '2rem'}}>
-                      <h3>Stock Collection</h3>
+                      <h3>Purchase/Sale Records</h3>
+                      <br></br>
                       <Table className= 'table table-striped table-hover center'>
                           <thead className="w-auto p-3" style = {{background: "lightgray"}}>
                           <tr>

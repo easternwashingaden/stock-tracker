@@ -80,4 +80,23 @@ section{
   
 }
 
+.carousel-inner > .item {
+  position: relative;
+  display: none;
+  -webkit-transition: 0.6s ease-in-out left;
+  -moz-transition: 0.6s ease-in-out left;
+  -o-transition: 0.6s ease-in-out left;
+  transition: 0.6s ease-in-out left;
+}
+
+.reduce-content{
+  max-width: 50%;
+  text-align: center;
+  align-content: center;
+}
+
+.image-fixed-size{
+  width: 480px;
+  height: 350px;
+}
 

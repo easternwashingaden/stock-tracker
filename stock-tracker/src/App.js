@@ -8,6 +8,7 @@ import Portfolio from './Portfolio';
 import Sale from './Sale';
 import AddCapital from './AddCapital';
 import Capital from './Capital';
+import About from './About';
 
 class App extends Component {
   state = {  }
@@ -23,6 +24,7 @@ class App extends Component {
           <Route path='/stockperformance' exact={true} component={StockPerformance}/>
           <Route path='/capital' exact={true} component={AddCapital}/>
           <Route path='/capitals' exact={true} component={Capital}/>
+          <Route path='/about' exact={true} component={About}/>
         </Switch>
       </Router>
      );

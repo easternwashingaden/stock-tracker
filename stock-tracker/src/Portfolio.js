@@ -26,7 +26,6 @@ class Portfolio extends Component {
           sales: [],
           xSales: [],
           ySales:[],
-          options: {},
           isOnShowDetailMode: false,
           stockChartXValues: [],
           stockChartYValues: [],
@@ -118,8 +117,10 @@ class Portfolio extends Component {
       })
 
       console.log(tickerList)
-      this.setState ({ labels: tickerList});  
-      console.log(this.categories)
+      const object = {
+        labels: tickerList
+      }
+      this.setState ({ options: object}); 
       
     }
 

@@ -26,6 +26,7 @@ class StockForm extends Component {
         date : new Date(),
         item : this.emptyItem,
         alert_message: "",
+        capitals: []
     }
     this.handleSumbit = this.handleSumbit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -49,6 +50,43 @@ class StockForm extends Component {
     .catch((error) =>{
       this.setState({alert_message : "error"})
     });
+
+    // subtract from cash from the capitals
+    const addingItem = {
+      value: item.share*item.price * (-1),
+      description: "Purchased stocks",
+      addedDate: item.purchasedDate,
+      refId: item.id
+    }
+    axios.post(`/api/capitals`, addingItem)
+    .then((response) => {
+      const updatedData = this.state.capitals;
+      updatedData.push(response.data);
+      this.setState({
+        capitals: updatedData,
+        alert_message: "success"
+      })
+      
+    })
+
+
+    // const {Stocks} = this.state;
+    // const addingItem = {
+    //   value: item.share*item.price * (-1),
+    //   description: "Purchased stocks",
+    //   addedDate: item.purchasedDate,
+    //   refId: Stocks[Stocks.length -1].id
+    // }
+
+    // axios.post(`/api/capitals`, addingItem)
+    //   .then((response) => {
+    //       const updatedData = this.state.capitals;
+    //       updatedData.push(response.data);
+    //       this.setState({
+    //       capitals: updatedData,
+    //       alert_message: "success"
+    //       })
+    //   })
 
     event.preventDefault();
     // console.log(this.state);
@@ -79,10 +117,10 @@ class StockForm extends Component {
     const body= await response.json();
     this.setState({Stocks : body, isLoading : false});
 
-    const responseStocks= await fetch('/api/stocks');
-    const bodyStocks = await responseStocks.json();
-    this.setState({Stock : bodyStocks , isLoading :false});
-    console.log(bodyStocks);
+    // const responseStocks= await fetch('/api/stocks');
+    // const bodyStocks = await responseStocks.json();
+    // this.setState({Stock : bodyStocks , isLoading :false});
+    // console.log(bodyStocks);
 }
 
  
@@ -104,7 +142,7 @@ class StockForm extends Component {
       <section>
         <div>
           <AppNav/>
-          <hr />
+          
           {this.state.alert_message === "success" ? <AddSuccessAlert/> : null}
           {this.state.alert_message === "error" ? <AddFailureAlert/> : null}
           <Container>

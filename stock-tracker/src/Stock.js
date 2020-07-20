@@ -7,7 +7,6 @@ import axios from 'axios';
 import "react-datepicker/dist/react-datepicker.css";
 import AddSale from './AddSale';
 import {Form, FormGroup, Button, Container } from 'reactstrap'
-import {Link} from 'react-router-dom';
 import DatePicker from "react-datepicker";
 import './App.css'
 import DeleteSuccessAlert from './DeleteSuccessAlert';
@@ -49,6 +48,7 @@ class Stock extends Component {
             alertMessageForSale: "",
             alertUpdateMessage: "",
             refId: null,
+            capitals: []
         }
         this.onSaleButtonClick = this.onSaleButtonClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -110,50 +110,56 @@ class Stock extends Component {
         // this.setState({alertUpdateMessage: "success"})
     }
 
-    onAddToSaleButtonClick(item){ 
-        // this.setState({ isAddSaleFormOpen: true })
-        // const {item} = this.state;
+    onAddToSaleButtonClick(item, event){ 
+        event.preventDefault();
         console.log(item)
         axios.post(`/api/sales`, item)
         .then((response) => {
             const updatedData = this.state.Sales;
             updatedData.push(response.data);
-            this.setState({
-                Sales: updatedData
-                
-            })
+            
+            const addingItem = {
+                value: item.share*item.soldPrice,
+                description: "Sold stocks",
+                addedDate: item.soldDate,
+                refId: updatedData[updatedData.length - 1].id
+            }
 
+            this.addSaleRecordToCapital(addingItem);
+    
+            this.setState({alertMessageForSale: "success", Sales: updatedData})
+            
         })
-
        .catch((error) =>{
             console.log(error.message)
           });
+        
         this.remove(item.id)
-        this.setState({alertMessageForSale : "success"}); 
+    
+        this.setState({isAddSaleFormOpen: false})
         
-        // adding cash from the capitals
-        this.getSaleArray()
-        const {Sales} = this.state;
-        console.log(Sales);
-        const addingItem = {
-            value: item.share*item.soldPrice,
-            description: "Sold stocks",
-            addedDate: item.soldDate,
-            refId: null,
-        }
+  
+    }
 
-        
-        axios.post(`/api/capitals`, addingItem)
+    addSaleRecordToCapital(item){
+        console.log("Hiiii")
+        axios.post(`/api/capitals`, item)
         .then((response) => {
+            console.log("Hiiii 22")
             const updatedData = this.state.capitals;
             updatedData.push(response.data);
             this.setState({
             capitals: updatedData,
             alert_message: "success"
             })
+
         })
-        
-      
+        .catch((error)=>{
+            console.log("Hiiii 3333")
+            this.setState({
+                alert_message: "error"
+            })
+        })
     }
 
     async getStockArray(){
@@ -173,7 +179,8 @@ class Stock extends Component {
         const response = await fetch('/api/stocks');
         const body= await response.json();
         this.setState({Stocks : body, isLoading : false});
-        await this.getSaleArray()
+        await this.getSaleArray();
+        await this.getCapitalArray();
 
     }
 
@@ -225,7 +232,7 @@ class Stock extends Component {
         console.log(this.state)
     
       }
-    async remove(id){
+    remove(id){
         axios.delete(`/api/stock/${id}`)
         .then((response)=>{
             let updatedStocks = [...this.state.Stocks].filter(i => i.id !== id);
@@ -238,6 +245,53 @@ class Stock extends Component {
             console.log(error);
         })
     }
+
+    removePurchasedStock(stock){
+        axios.delete(`/api/stock/${stock.id}`)
+        .then((response)=>{
+            let updatedStocks = [...this.state.Stocks].filter(i => i.id !== stock.id);
+            this.setState({
+                Stocks : updatedStocks,
+                alertMessage: 'success'
+            });
+        
+        console.log(`stock: ${stock.id}`)
+        const deletingCapital = this.state.capitals.find((element => element.refId === stock.id && element.description === "Purchased stocks"))
+        console.log(deletingCapital);
+        console.log(`deletingCapital: ${deletingCapital.id}`)
+        // const deletingItemOnCapital = {
+        //     value: stock.share*stock.soldPrice,
+        //     description: "Sold stocks",
+        //     addedDate: editingItem.soldDate,
+        //     refId: editingItem.id
+        this.removeCatpital(deletingCapital.id)
+        //     }
+        })
+        .catch((error) =>{
+            console.log(error);
+        })
+
+    }
+
+    removeCatpital(id){
+        axios.delete(`/api/capital/${id}`)
+        .then((response)=>{
+            let updatedCapitals = [...this.state.capitals].filter(i => i.id !== id);
+            this.setState({
+                capitals : updatedCapitals,
+                alertMessage: 'success'
+            });
+        })
+        .catch((error) =>{
+            console.log(error);
+        })
+
+    }
+
+    async getCapitalArray(){
+        const res = await axios.get('/api/capitals');
+        this.setState({capitals: res.data});  
+      }
 
     renderEditView(){
         const {editingItem} = this.state;
@@ -296,7 +350,7 @@ class Stock extends Component {
             <td>%{((((currentPrices[i] - stock.price)*stock.share)/(stock.share * parseFloat(stock.price)))*100).toFixed(2)}</td>
             {/* <td>{((parseFloat(currentPrices[i]) - parseFloat(stock.price)/(stock.share * stock.price))).toFixed(2)}</td> */}
             <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
-            <Button size= 'sm' color='danger' onClick={()=> this.remove(stock.id)}>Delete</Button>
+            <Button size= 'sm' color='danger' onClick={this.removePurchasedStock.bind(this, stock)}>Delete</Button>
             <Button size= 'sm' color='primary' onClick={this.onClickEditButton.bind(this, stock)}>Edit</Button>
             <Button size= 'sm' color='success' onClick= {this.onSaleButtonClick.bind(this, stock)}>Sale</Button>
             </tr>
@@ -309,7 +363,7 @@ class Stock extends Component {
             <section>
                 <div>
                     <AppNav/>
-                    <br></br>
+                    {/* <br></br> */}
                     {this.state.alertUpdateMessage === "success" ? <UpdateSuccessAlert/> : null}
                     {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
                     {this.state.alertMessageForSale === "success" ? <AddToSaleListSuccessAlert/> : null}

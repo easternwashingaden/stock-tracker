@@ -47,7 +47,8 @@ class Stock extends Component {
             date : new Date(),
             alertMessage: "",
             alertMessageForSale: "",
-            alertUpdateMessage: ""
+            alertUpdateMessage: "",
+            refId: null,
         }
         this.onSaleButtonClick = this.onSaleButtonClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -115,12 +116,12 @@ class Stock extends Component {
         console.log(item)
         axios.post(`/api/sales`, item)
         .then((response) => {
-        const updatedData = this.state.Sales;
-        updatedData.push(response.data);
-        this.setState({
-            Sales: updatedData
-            
-        })
+            const updatedData = this.state.Sales;
+            updatedData.push(response.data);
+            this.setState({
+                Sales: updatedData
+                
+            })
 
         })
 
@@ -128,7 +129,31 @@ class Stock extends Component {
             console.log(error.message)
           });
         this.remove(item.id)
-        this.setState({alertMessageForSale : "success"});   
+        this.setState({alertMessageForSale : "success"}); 
+        
+        // adding cash from the capitals
+        this.getSaleArray()
+        const {Sales} = this.state;
+        console.log(Sales);
+        const addingItem = {
+            value: item.share*item.soldPrice,
+            description: "Sold stocks",
+            addedDate: item.soldDate,
+            refId: null,
+        }
+
+        
+        axios.post(`/api/capitals`, addingItem)
+        .then((response) => {
+            const updatedData = this.state.capitals;
+            updatedData.push(response.data);
+            this.setState({
+            capitals: updatedData,
+            alert_message: "success"
+            })
+        })
+        
+      
     }
 
     async getStockArray(){
@@ -137,11 +162,18 @@ class Stock extends Component {
         await this.loadPrices(res.data)   
     }
 
+    async getSaleArray(){
+        const res = await axios.get('/api/sales');
+        this.setState({Sales: res.data});
+        await this.loadPrices(res.data)   
+    }
+
     async componentDidMount(){
         await this.getStockArray();
         const response = await fetch('/api/stocks');
         const body= await response.json();
         this.setState({Stocks : body, isLoading : false});
+        await this.getSaleArray()
 
     }
 
@@ -281,8 +313,9 @@ class Stock extends Component {
                     {this.state.alertUpdateMessage === "success" ? <UpdateSuccessAlert/> : null}
                     {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
                     {this.state.alertMessageForSale === "success" ? <AddToSaleListSuccessAlert/> : null}
-                    <Container className = "center" style = {{margin: '2rem'}}>
-                        <h3>Stock Holdings</h3>
+                    <Container>
+                        <h3 style = {{textAlign: 'center', fontWeight: 'bold'}}>Stock Holdings</h3>
+                        <br></br>
                         <Table style = {{width: '120%'}}className= 'table table-striped table-hover center w-auto'>
                             <thead style = {{background: "lightseagreen"}}>
                             <tr>
@@ -342,7 +375,7 @@ class Stock extends Component {
                             </FormGroup>
                             </div>
                                 <Button color='primary' type='submit'> Save </Button>{' '}
-                                <Button color='secondary'onClick ={(e)=> this.setState({isAddSaleFormOpen: false})}>Cancel</Button>
+                                <Button color='danger'onClick ={(e)=> this.setState({isAddSaleFormOpen: false})}>Cancel</Button>
                             </Form>
                         </Container>
                     </AddSale>

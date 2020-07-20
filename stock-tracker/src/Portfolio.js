@@ -21,7 +21,11 @@ class Portfolio extends Component {
           isLoading : true,
           currentPrices : [],
           results : [],
-          Stocks : [], 
+          Stocks : [],
+          capitals: [], 
+          sales: [],
+          xSales: [],
+          ySales:[],
           options: {},
           isOnShowDetailMode: false,
           stockChartXValues: [],
@@ -93,6 +97,8 @@ class Portfolio extends Component {
         const response = await fetch('/api/stocks');
         const body= await response.json();
         this.setState({Stocks : body, isLoading : false });
+        await this.getCapitalArray()
+        await this.getSaleArray()
     }
 
     getTotalCosts(Stocks){
@@ -150,8 +156,34 @@ class Portfolio extends Component {
         })
     }
 
+    async getCapitalArray(){
+      const res = await axios.get('/api/capitals');
+      this.setState({capitals: res.data});  
+    }
+
+    async getSaleArray(){
+      const res = await axios.get('/api/sales');
+      this.setState({sales: res.data});  
+      const allSales = res.data.map((sale =>{
+        return  (sale.share * sale.soldPrice - sale.share * sale.price)
+      }))
+      console.log(this.allSales);
+
+      const allSoldDates = res.data.map((sale =>{
+        return sale.soldDate
+      }))
+
+      console.log(this.allSoldDates);
+      this.setState({
+        xSales: allSales,
+        ySales: allSoldDates
+      })
+    }
+
+
+
     render() { 
-        const {Stocks, currentPrices,isLoading} = this.state;
+        const {Stocks, capitals, currentPrices,isLoading} = this.state;
         if(isLoading)
             return(<div>Loading...</div>)
 
@@ -166,7 +198,43 @@ class Portfolio extends Component {
               <td>${(stock.share * parseFloat(stock.price)).toFixed(2)}</td>
             </tr>
             )
+
+        let totalCosts = Stocks.map((stock) =>{
+          return stock.share * stock.price
+        })
+        
+        const allCapitalValues = capitals.map((capital) =>{
+          return capital.value
+        })
           
+        const sumTotalCost = totalCosts.reduce(function(a, b){
+          return a + b;
+        }, 0);
+
+
+        const currentCapitalValue = allCapitalValues.reduce(function(a, b){
+          return a + b;
+        }, 0);
+
+
+        //getting the initail capitals
+
+        // getting all the captials where the descriptions are not "Sold stock" && "Purchased stocks"
+
+        const allInitialCapitals = capitals.filter(element => element.description !== "Purchased stocks" && element.description !== "Sold stocks")
+
+        const allInitialCapitalValues = allInitialCapitals.map((capital=>{
+          return capital.value
+        }))
+         
+        
+
+        const totalIntialCapital = allInitialCapitalValues.reduce(function(a, b){
+          return a + b;
+        }, 0);
+
+        const profit = (currentCapitalValue + sumTotalCost) - totalIntialCapital;
+
         return (
             <section>
                 <div>
@@ -185,7 +253,7 @@ class Portfolio extends Component {
                           marker: {color: 'red'},
                         }
                       ]}
-                        layout={{width: 720, height: 440, title: 'Stock Performance'}}
+                        layout={{width: 550, height: 440, title: 'Stock Performance'}}
                         
                       />
                       </div>
@@ -201,45 +269,100 @@ class Portfolio extends Component {
 
                   <br></br>
                   <br></br>
-                  <h5 style = {{textAlign: 'center'}}>Portfolio(Value:)</h5>
+                  <h3 style = {{textAlign: 'center', fontWeight: 'bold'}}>Portfolio</h3>
                   <br></br>
                   <br></br>
                   <div className = "container">
                     <div className="row">
-                      <div className="col-sm-8">
-                        <Container className = "border-right">
-                        <div className="table-responsive">
-                          <Table className= 'table table-striped table-hover center'>
-                              <thead style = {{background: "lightseagreen"}}>
-                              <tr>
-                                  <th>Ticker</th>
-                                  <th>Share</th>
-                                  <th>Purchased Price</th>
-                                  <th>Current Price</th>
-                                  <th>Total Equity</th>
-                                  <th>Total Cost</th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                                  {rows}
-                              </tbody>
-                            </Table>
-                          </div>
+                      <div class="col-8 card">
+                      <Container>
+                        <h6 className="card-header info-color white-text text-center py-3" style = {{background: "lightblue", fontWeight: 'bold'}} >Investment Summary </h6>
+                          <Table className= 'table table-striped table-hover w-atuo small'>
+                            <tbody>
+                                <tr>
+                                  <th>Starting Capital</th>
+                                    <td>${totalIntialCapital.toFixed(2)}</td>
+                                </tr>
+                      
+                                <tr>
+                                  <th>Stock Purchases/Holdings</th>
+                                    <td>${sumTotalCost.toFixed(2)}</td>
+                                </tr>
+
+                                <tr>
+                                  <th>Fund Available for Trading</th>
+                                    <td>${currentCapitalValue.toFixed(2)}</td>
+                                </tr>
+
+                                <tr>
+                                  <th>Gain/Loss</th>
+                                    <td>${profit.toFixed(2)}</td>
+                                </tr>
+
+                                <tr>
+                                  <th>Total Cash Value</th>
+                                    <td>${(profit + totalIntialCapital).toFixed(2)}</td>
+                                </tr>
+
+                            </tbody>
+                            
+                          </Table>
                         </Container>
                       </div>
-                      <div className=" col-6 col-md-4 card">
-                        <h5 className="card-header info-color white-text text-center py-4" style = {{background: "lightseagreen"}}>
+                      
+                      <div className=" col card">
+                        <h6 className="card-header info-color white-text text-center py-3" style = {{background: "lightgray"}}>
                           <strong>Purchased Stocks</strong>
-                        </h5>
+                        </h6>
                         <div>
                           <div className="donut">
                             <Chart 
                               options={this.state.options} 
                               series={this.state.series} 
                               type="donut" 
-                              width="380" />
+                              width="300" />
                           </div>
                         </div>
+                      </div>
+
+                      <div class="w-100"></div>
+                      <div className="col-8" style = {{fontWeight: 'bold'}}>
+                        <Container className = "border-right">
+                          <h6 className = 'center' style = {{marginTop: "2rem", fontWeight: 'bold'}}>Purchased Stocks List</h6>
+                          <Table className= 'table table-striped table-hover w-atuo small'>
+                            <thead style = {{background: "lightseagreen"}}>
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Share</th>
+                                <th>Purchased Price</th>
+                                <th>Current Price</th>
+                                <th>Total Equity</th>
+                                <th>Total Cost</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {rows}
+                            </tbody>
+                          </Table>
+                        </Container>
+                      </div>
+                      <div class="col">
+                        <h6 style = {{textAlign: "center" , marginTop: "2rem", fontWeight: 'bold'}}>Sale Graphical History</h6>
+                        {this.state.xSales && this.state.ySales.length ? <Plot
+                        data={[
+                        {
+                          x: this.state.ySales,
+                          y: this.state.xSales,
+                          type: 'bar',
+                          mode: 'lines+markers',
+                          marker: {color: 'orange'},
+                        }
+                      ]}
+                        layout={{width: 420, height: 490}}
+                      />
+                      :
+                      <h2 className="text-center">No Results</h2>
+                      }
                       </div>
                     </div>
                   </div>

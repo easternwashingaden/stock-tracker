@@ -29,7 +29,8 @@ class Sale extends Component {
         isInEditMode: false,
         editingItem: this.emptySaleItem,
         date: new Date(),
-        alertMessage: ""
+        alertMessage: "",
+        capitals: []
     }
     this.handleChange = this.handleChange.bind(this);
     this.updateItem = this.updateItem.bind(this);
@@ -47,6 +48,7 @@ class Sale extends Component {
     const response = await fetch('/api/sales');
     const body= await response.json();
     this.setState({Sales : body, isLoading : false});
+    await this.getCapitalArray()
 
   }
 
@@ -90,6 +92,29 @@ class Sale extends Component {
     .catch((error) =>{
       console.log(error.message)
     })
+
+    //now we know the reference of row that need to be updated in the capital records,
+    
+    // const editingCapital = this.capitals.find((element => element.refId === editingItem.id))
+
+    // console.log(editingCapital)
+    // // 
+    // const editingItemOnCapital = {
+    //   value: editingItem.share*editingItem.soldPrice,
+    //   description: "Sold stocks",
+    //   addedDate: editingItem.soldDate,
+    //   refId: editingItem.id
+    // }
+
+    // axios.put(`/api/capital/${editingCapital.id}`, editingItemOnCapital)
+    //     .then((response) => {
+    //         const updatedData = this.state.capitals;
+    //         updatedData.push(response.data);
+    //         this.setState({
+    //         capitals: updatedData,
+    //         alert_message: "success"
+    //     })
+    // })
   }
 
   handleChange(event){
@@ -107,6 +132,11 @@ class Sale extends Component {
     let editingItem={...this.state.editingItem};
     editingItem.soldDate = date;
     this.setState({editingItem});
+  }
+
+  async getCapitalArray(){
+    const res = await axios.get('/api/capitals');
+    this.setState({capitals: res.data});  
   }
 
   renderEditView(){
@@ -189,8 +219,8 @@ class Sale extends Component {
                   <AppNav/>
                   <br></br>
                   {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
-                  <Container className = "center" style = {{margin: '2rem'}}>
-                      <h3>Purchase/Sale Records</h3>
+                  <Container>
+                      <h3 style = {{textAlign: 'center', fontWeight: 'bold'}}>Purchase/Sale Records</h3>
                       <br></br>
                       <Table className= 'table table-striped table-hover center'>
                           <thead className="w-auto p-3" style = {{background: "lightgray"}}>

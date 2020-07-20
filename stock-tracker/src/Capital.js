@@ -198,7 +198,7 @@ class Capital extends Component {
                                 <th>Value</th>
                                 <th>Description</th>
                                 <th>Added Date</th>
-                                <th>Reference Number</th>
+                                <th>Confirmation Number</th>
                                 <th>Action</th>
                             </tr>
                             </thead>

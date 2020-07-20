@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
 import AddSuccessAlert from './AddSuccessAlert';
 import AddFailureAlert from './AddFailureAlert';
+import AddToSaleListSuccessAlert from './AddToSaleListSuccessAlert';
 
 class StockForm extends Component {
   emptyItem = {
@@ -26,7 +27,9 @@ class StockForm extends Component {
         date : new Date(),
         item : this.emptyItem,
         alert_message: "",
-        capitals: []
+        capitals: [], 
+        alertMessageForSale: "",
+
     }
     this.handleSumbit = this.handleSumbit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -40,62 +43,46 @@ class StockForm extends Component {
     .then((response) => {
       const updatedData = this.state.Stocks;
       updatedData.push(response.data);
-      this.setState({
-        Stocks: updatedData,
-        alert_message: "success"
-      })
-      
-    })
 
+    // subtract from cash from the capitals
+      const addingItem = {
+        value: item.share*item.price * (-1),
+        description: "Purchased stocks",
+        addedDate: item.purchasedDate,
+        refId: updatedData[updatedData.length - 1].id
+      }
+      this.addSaleRecordToCapital(addingItem);
+      this.setState({alertMessageForSale: "success", Stocks: updatedData, alert_message: "success"})
+    
+    })
     .catch((error) =>{
       this.setState({alert_message : "error"})
     });
-
-    // subtract from cash from the capitals
-    const addingItem = {
-      value: item.share*item.price * (-1),
-      description: "Purchased stocks",
-      addedDate: item.purchasedDate,
-      refId: item.id
-    }
-    axios.post(`/api/capitals`, addingItem)
-    .then((response) => {
-      const updatedData = this.state.capitals;
-      updatedData.push(response.data);
-      this.setState({
-        capitals: updatedData,
-        alert_message: "success"
-      })
-      
-    })
-
-
-    // const {Stocks} = this.state;
-    // const addingItem = {
-    //   value: item.share*item.price * (-1),
-    //   description: "Purchased stocks",
-    //   addedDate: item.purchasedDate,
-    //   refId: Stocks[Stocks.length -1].id
-    // }
-
-    // axios.post(`/api/capitals`, addingItem)
-    //   .then((response) => {
-    //       const updatedData = this.state.capitals;
-    //       updatedData.push(response.data);
-    //       this.setState({
-    //       capitals: updatedData,
-    //       alert_message: "success"
-    //       })
-    //   })
-
     event.preventDefault();
     // console.log(this.state);
     // this.props.history.push('/stocks');
     // console.log(this.Stocks)
-    event.target.reset(); 
-
-       
+    event.target.reset();      
   }
+
+  addSaleRecordToCapital(item){
+    axios.post(`/api/capitals`, item)
+    .then((response) => {
+      const updatedData = this.state.capitals;
+      updatedData.push(response.data);
+      this.setState({
+      capitals: updatedData,
+      alert_message: "success"
+      })
+
+    })
+    .catch((error)=>{
+        
+      this.setState({
+          alert_message: "error"
+      })
+    })
+}
 
   handleChange(event){
     const target = event.target;
@@ -145,6 +132,7 @@ class StockForm extends Component {
           
           {this.state.alert_message === "success" ? <AddSuccessAlert/> : null}
           {this.state.alert_message === "error" ? <AddFailureAlert/> : null}
+          {this.state.alertMessageForSale === "success" ? <AddToSaleListSuccessAlert/> : null}
           <Container>
             {title}
 
@@ -175,7 +163,7 @@ class StockForm extends Component {
               </FormGroup>
               </div>
                 <Button color='primary' type='submit'>Save </Button>{' '}
-                <Button color='secondary' tag={Link} to = '/stocks'>Cancel</Button>
+                <Button color='danger' tag={Link} to = '/stocks'>Cancel</Button>
             </Form>
 
           </Container>

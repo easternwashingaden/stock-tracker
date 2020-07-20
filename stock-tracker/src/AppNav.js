@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Nav,Navbar,NavbarBrand,NavItem,NavLink,NavbarText} from 'reactstrap';
+import {Nav,NavItem,NavLink,NavbarText} from 'reactstrap';
+import Navbar from 'react-bootstrap/Navbar'
+import NavDropdown from 'react-bootstrap/NavDropdown'
 class AppNav extends Component {
     state = {  }
     render() { 
@@ -14,23 +16,26 @@ class AppNav extends Component {
                                 <NavLink href="/" >Home</NavLink>
                             </NavItem>
                             <NavItem>
+                                <NavLink href="/" >About</NavLink>
+                            </NavItem>
+                            <NavItem>
                                 <NavLink href="/portfolio">Portfolio</NavLink>
                             </NavItem>
-                            <NavItem>
-                                <NavLink href="/stocks">Stocks</NavLink>
-                            </NavItem>
-                            <NavItem>
-                                <NavLink href="/stock">Add Stock</NavLink>
-                            </NavItem>
-                            <NavItem>
-                                <NavLink href="/history">Capital History</NavLink>
-                            </NavItem>
+                            <NavDropdown title="Stocks" id="basic-nav-dropdown">
+                                <NavDropdown.Item href="/stock">Add Stock</NavDropdown.Item>
+                                <NavDropdown.Item href="/stocks">Stock Holdings</NavDropdown.Item>
+                                <NavDropdown.Item href="/history">Sale History</NavDropdown.Item>
+                            </NavDropdown>
+                            <NavDropdown title="Cash" id="basic-nav-dropdown">
+                                <NavDropdown.Item href="/capital">Add Cash</NavDropdown.Item>
+                                <NavDropdown.Item href="/capitals">Capital History</NavDropdown.Item>
+                            </NavDropdown>
                             <NavItem>
                                 <NavLink href="/stockperformance">Stock Performance</NavLink>
                             </NavItem>
                         </Nav>
                 </Navbar>
-    </div>
+        </div>
          );
     }
 }

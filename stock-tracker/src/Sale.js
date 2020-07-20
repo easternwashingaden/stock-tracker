@@ -75,47 +75,49 @@ class Sale extends Component {
     })
   }
 
-  updateItem(){
+  updateItem(event){
     const {editingItem} = this.state;
     axios.put(`/api/sale/${editingItem.id}`, editingItem)
     .then((response) =>{
       const updatedData = this.state.Sales;
           updatedData.push(response.data);
-          this.setState({
-            Sales: updatedData,
-            isInEditMode : false
-          })
+      //now we know the reference of row that need to be updated in the capital records,
+    
+      const editingCapital = this.capitals.find((element => element.refId === editingItem.id && element.description === "Sold stocks"))
 
-          console.log(this.Sales)
-          console.log("Updated successfully")
+      console.log(editingCapital);
+      // 
+      const editingItemOnCapital = {
+        value: editingItem.share*editingItem.soldPrice,
+        description: "Sold stocks",
+        addedDate: editingItem.soldDate,
+        refId: editingCapital.refId
+      }
+      axios.put(`/api/capital/${editingCapital.id}`, editingItemOnCapital)
+        .then((response) => {
+            const updatedData = this.state.capitals;
+            updatedData.push(response.data);
+            this.setState({
+            capitals: updatedData,
+            alert_message: "success"
+        })
+      this.setState({
+        Sales: updatedData,
+        isInEditMode : false
+      })
+    })
+      .catch((error)=>{
+        console.log("Hiiii 3333")
+        this.setState({
+          alert_message: "error"
+        })
+      })     
     })
     .catch((error) =>{
       console.log(error.message)
     })
-
-    //now we know the reference of row that need to be updated in the capital records,
-    
-    // const editingCapital = this.capitals.find((element => element.refId === editingItem.id))
-
-    // console.log(editingCapital)
-    // // 
-    // const editingItemOnCapital = {
-    //   value: editingItem.share*editingItem.soldPrice,
-    //   description: "Sold stocks",
-    //   addedDate: editingItem.soldDate,
-    //   refId: editingItem.id
-    // }
-
-    // axios.put(`/api/capital/${editingCapital.id}`, editingItemOnCapital)
-    //     .then((response) => {
-    //         const updatedData = this.state.capitals;
-    //         updatedData.push(response.data);
-    //         this.setState({
-    //         capitals: updatedData,
-    //         alert_message: "success"
-    //     })
-    // })
   }
+
 
   handleChange(event){
     const target = event.target;
@@ -187,6 +189,43 @@ class Sale extends Component {
     </Container>
     )
   }
+
+  removeSoldStock(stock){
+    axios.delete(`/api/sale/${stock.id}`)
+    .then((response)=>{
+        let updatedSales = [...this.state.Sales].filter(i => i.id !== stock.id);
+        this.setState({
+            Sales : updatedSales,
+            alertMessage: 'success'
+        });
+    
+    console.log(`stock: ${stock.id}`)
+    const deletingCapital = this.state.capitals.find((element => element.refId === stock.id && element.description === "Sold stocks"))
+    console.log(deletingCapital);
+    console.log(`deletingCapital: ${deletingCapital.id}`)
+    this.removeCatpital(deletingCapital.id)
+    //     }
+    })
+    .catch((error) =>{
+        console.log(error);
+    })
+
+}
+
+  removeCatpital(id){
+    axios.delete(`/api/capital/${id}`)
+    .then((response)=>{
+        let updatedCapitals = [...this.state.capitals].filter(i => i.id !== id);
+        this.setState({
+            capitals : updatedCapitals,
+            alertMessage: 'success'
+        });
+    })
+    .catch((error) =>{
+        console.log(error);
+    })
+
+  } 
   
   render() { 
 
@@ -205,7 +244,7 @@ class Sale extends Component {
             <td><Moment date = {stock.soldDate} format = "YYYY/MM/DD"/></td>
             <td>${((stock.soldPrice - stock.price)*stock.share).toFixed(2)}</td>
             <td>%{(((stock.soldPrice - stock.price)/stock.price)*100).toFixed(2) }</td>
-            <Button size= 'sm' color='danger' onClick={()=> this.remove(stock.id)}>Delete</Button>
+            <Button size= 'sm' color='danger' onClick={this.removeSoldStock.bind(this, stock)}>Delete</Button>
             <Button size= 'sm' color='primary' onClick={this.onClickEditButton.bind(this, stock)}>Edit</Button>
             </tr>
             )

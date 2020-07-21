@@ -76,16 +76,16 @@ class Sale extends Component {
     })
   }
 
-  updateItem(event){
+  updateItem(editingItem, event){
     event.preventDefault();
-    const {editingItem} = this.state;
+    // const {editingItem} = this.state;
     axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/sale/${editingItem.id}`, editingItem)
     .then((response) =>{
       const updatedData = this.state.Sales;
           updatedData.push(response.data);
       //now we know the reference of row that need to be updated in the capital records,
     
-      const editingCapital = this.capitals.find((element => element.refId === editingItem.id && element.description === "Sold stocks"))
+      const editingCapital = this.state.capitals.find((element => element.refId === editingItem.id && element.description === "Sold stocks"))
 
       console.log(editingCapital);
       // 
@@ -98,7 +98,6 @@ class Sale extends Component {
       axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/capital/${editingCapital.id}`, editingItemOnCapital)
         .then((response) => {
             const updatedData = this.state.capitals;
-            updatedData.push(response.data);
             this.setState({
             capitals: updatedData,
             alert_message: "success"

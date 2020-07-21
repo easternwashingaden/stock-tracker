@@ -77,6 +77,7 @@ class Sale extends Component {
   }
 
   updateItem(event){
+    event.preventDefault();
     const {editingItem} = this.state;
     axios.put(`/api/sale/${editingItem.id}`, editingItem)
     .then((response) =>{

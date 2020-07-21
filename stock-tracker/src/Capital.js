@@ -12,7 +12,8 @@ import DatePicker from "react-datepicker";
 import './App.css'
 import DeleteSuccessAlert from './DeleteSuccessAlert';
 import AddToSaleListSuccessAlert from './AddToSaleListSuccessAlert';
-import UpdateSuccessAlert from './UpdateSuccessAlert'
+import UpdateSuccessAlert from './UpdateSuccessAlert';
+import CurrencyFormat from 'react-currency-format';
 class Capital extends Component {
     
     emptyItem = {
@@ -164,11 +165,12 @@ class Capital extends Component {
         const {capitals, selectedCapital, editItem, item,isLoading} = this.state;
         if(isLoading)
             return(<div>Loading...</div>)
-        
         let rows = 
         capitals.map((capital) =>
             <tr key = {capital.id} >
-            <td>{capital.value}</td>
+            <td className = { capital.value > 0 ? 'green': 'red'}>
+                <CurrencyFormat value={parseFloat(capital.value).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
             <td>{capital.description}</td>
             <td><Moment date = {capital.addedDate} format = "YYYY/MM/DD"/></td>
             <td>{capital.refId}</td>

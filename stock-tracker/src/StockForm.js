@@ -39,7 +39,7 @@ class StockForm extends Component {
   async handleSumbit(event){
     
     const {item} = this.state;
-    axios.post(`/api/stocks`, item)
+    axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/stocks`, item)
     .then((response) => {
       const updatedData = this.state.Stocks;
       updatedData.push(response.data);
@@ -66,7 +66,7 @@ class StockForm extends Component {
   }
 
   addSaleRecordToCapital(item){
-    axios.post(`/api/capitals`, item)
+    axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/capitals`, item)
     .then((response) => {
       const updatedData = this.state.capitals;
       updatedData.push(response.data);
@@ -100,7 +100,7 @@ class StockForm extends Component {
     this.setState({item});
   }
   async componentDidMount(){
-    const response = await fetch('/api/stocks');
+    const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/stocks');
     const body= await response.json();
     this.setState({Stocks : body, isLoading : false});
 

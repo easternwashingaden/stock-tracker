@@ -115,7 +115,7 @@ class Capital extends Component {
     
       }
     async remove(id){
-        axios.delete(`https://tithvorlak-stock-tracker.herokuapp.com/api/capital/${id}`)
+        axios.delete(`tithvorlak-stock-tracker.herokuapp.com/api/capital/${id}`)
         .then((response)=>{
             let updatedCapitals = [...this.state.capitals].filter(i => i.id !== id);
             this.setState({

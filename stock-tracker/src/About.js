@@ -9,7 +9,6 @@ class About extends Component {
       <section >
         <AppNav/>
         <div style={{margin:'2rem'}}>
-          <h1>Hi</h1>
           <img
             className="about-img"
             src="https://i.imgur.com/c7YypYd.jpg"

@@ -55,7 +55,7 @@ class Capital extends Component {
 
     handleEdit(){
         const {editingItem} = this.state;
-        axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/capital/${editingItem.id}.json`, editingItem)
+        axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/capital/${editingItem.id}`, editingItem)
         .then((response) =>{
             const updatedData = this.state.capitals;
                 updatedData.push(response.data);
@@ -75,13 +75,13 @@ class Capital extends Component {
     }
 
     async getCapitalArray(){
-        const res = await axios.get('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals.json');
+        const res = await axios.get('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals');
         this.setState({capitals: res.data});  
     }
 
     async componentDidMount(){
         await this.getCapitalArray();
-        const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals.json');
+        const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals');
         const body= await response.json();
         this.setState({capitals : body, isLoading : false});
 

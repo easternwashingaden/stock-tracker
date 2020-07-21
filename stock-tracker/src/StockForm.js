@@ -39,7 +39,7 @@ class StockForm extends Component {
   async handleSumbit(event){
     
     const {item} = this.state;
-    axios.post(`/api/stocks`, item)
+    axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/stocks`, item)
     .then((response) => {
       const updatedData = this.state.Stocks;
       updatedData.push(response.data);

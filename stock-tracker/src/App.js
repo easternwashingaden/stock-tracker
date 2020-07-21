@@ -9,6 +9,7 @@ import Sale from './Sale';
 import AddCapital from './AddCapital';
 import Capital from './Capital';
 import About from './About';
+import Footer from './Footer';
 
 class App extends Component {
   state = {  }
@@ -26,7 +27,9 @@ class App extends Component {
           <Route path='/capitals' exact={true} component={Capital}/>
           <Route path='/about' exact={true} component={About}/>
         </Switch>
+        <Footer/>
       </Router>
+
      );
   }
 }

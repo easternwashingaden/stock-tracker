@@ -75,13 +75,13 @@ class Capital extends Component {
     }
 
     async getCapitalArray(){
-        const res = await axios.get('tithvorlak-stock-tracker.herokuapp.com/api/capitals');
+        const res = await axios.get('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals');
         this.setState({capitals: res.data});  
     }
 
     async componentDidMount(){
         await this.getCapitalArray();
-        const response = await fetch('tithvorlak-stock-tracker.herokuapp.com/api/capitals');
+        const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals');
         const body= await response.json();
         this.setState({capitals : body, isLoading : false});
 

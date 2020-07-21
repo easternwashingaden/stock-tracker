@@ -10,6 +10,7 @@ import DatePicker from "react-datepicker";
 import {Link} from 'react-router-dom';
 import  Chart from "react-apexcharts";
 import Plot from 'react-plotly.js';
+import CurrencyFormat from 'react-currency-format';
 
 
 class Portfolio extends Component {
@@ -181,7 +182,11 @@ class Portfolio extends Component {
       })
     }
 
-
+    fontColorChange(value){
+      return {
+        color: (value > 0) ? '#4caf50' : '#e53935'
+      }
+    }
 
     render() { 
         const {Stocks, capitals, currentPrices,isLoading} = this.state;
@@ -193,10 +198,18 @@ class Portfolio extends Component {
             <tr key = {stock.id} >
               <td onMouseEnter = {this.handleHoverOn.bind(this, stock.ticker)}>{stock.ticker}</td>
               <td>{stock.share}</td>
-              <td>${parseFloat(stock.price).toFixed(2)}</td>
-              <td>${currentPrices[i]}</td>
-              <td>${(stock.share * parseFloat(currentPrices[i])).toFixed(2)}</td>
-              <td>${(stock.share * parseFloat(stock.price)).toFixed(2)}</td>
+              <td>
+                <CurrencyFormat value={parseFloat(stock.price).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+              </td>
+              <td>
+                <CurrencyFormat value={parseFloat(currentPrices[i]).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+              </td>
+              <td>
+                <CurrencyFormat value={(stock.share * parseFloat(currentPrices[i])).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+              </td>
+              <td>
+                <CurrencyFormat value={(stock.share * parseFloat(stock.price)).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+              </td>
             </tr>
             )
 
@@ -282,27 +295,37 @@ class Portfolio extends Component {
                             <tbody>
                                 <tr>
                                   <th>Starting Capital</th>
-                                    <td>${totalIntialCapital.toFixed(2)}</td>
+                                    <td>
+                                    <CurrencyFormat value={totalIntialCapital.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                                  </td>
                                 </tr>
                       
                                 <tr>
                                   <th>Stock Purchases/Holdings</th>
-                                    <td>${sumTotalCost.toFixed(2)}</td>
+                                    <td>
+                                      <CurrencyFormat value={sumTotalCost.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                                    </td>
                                 </tr>
 
                                 <tr>
                                   <th>Fund Available for Trading</th>
-                                    <td>${currentCapitalValue.toFixed(2)}</td>
+                                    <td>
+                                      <CurrencyFormat value={currentCapitalValue.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                                    </td>
                                 </tr>
 
                                 <tr>
                                   <th>Gain/Loss</th>
-                                    <td>${profit.toFixed(2)}</td>
+                                    <td className = {profit > 0 ? 'green': 'red'}>
+                                    <CurrencyFormat value={profit.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                                    </td>
                                 </tr>
 
                                 <tr>
                                   <th>Total Cash Value</th>
-                                    <td>${(profit + totalIntialCapital).toFixed(2)}</td>
+                                    <td className = {profit + totalIntialCapital > totalIntialCapital ? 'green': 'red'}>
+                                    <CurrencyFormat value={(profit + totalIntialCapital).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+                                    </td>
                                 </tr>
 
                             </tbody>

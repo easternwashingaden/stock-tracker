@@ -100,3 +100,23 @@ section{
   height: 350px;
 }
 
+.about-img{
+  max-width: 50%;
+  border: solid 1px lightseagreen;
+  border-radius: 50%;
+}
+
+footer {
+  margin-top: auto;
+  max-height: fit-content;
+  
+}
+
+.red {
+  color: red;
+}
+
+
+.green {
+  color:green;
+}

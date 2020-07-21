@@ -46,7 +46,7 @@ class Sale extends Component {
 
   async componentDidMount(){
     await this.getSaleArray();
-    const response = await fetch('/api/sales');
+    const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/sales');
     const body= await response.json();
     this.setState({Sales : body, isLoading : false});
     await this.getCapitalArray()

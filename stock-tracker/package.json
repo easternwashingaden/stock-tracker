@@ -1,5 +1,6 @@
 {
   "name": "my-app",
+  "homepage": "https://stock-portfolio-tracker-8156f.web.app/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

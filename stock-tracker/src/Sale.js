@@ -7,7 +7,8 @@ import { Button, Container, Table, Form, FormGroup  } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import DatePicker from "react-datepicker";
 import DeleteSuccessAlert from './DeleteSuccessAlert';
-import './App.css'
+import './App.css';
+import CurrencyFormat from 'react-currency-format';
 
 class Sale extends Component {
   emptySaleItem = {
@@ -238,12 +239,18 @@ class Sale extends Component {
             <tr key = {stock.id} >
             <td>{(stock.ticker)}</td>
             <td>{stock.share}</td>
-            <td>${stock.price}</td>
-            <td>${stock.soldPrice}</td>
+            <td>
+              <CurrencyFormat value={stock.price} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
+            <td>
+              <CurrencyFormat value={stock.soldPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
             <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
             <td><Moment date = {stock.soldDate} format = "YYYY/MM/DD"/></td>
-            <td>${((stock.soldPrice - stock.price)*stock.share).toFixed(2)}</td>
-            <td>%{(((stock.soldPrice - stock.price)/stock.price)*100).toFixed(2) }</td>
+            <td className = {(stock.soldPrice - stock.price) > 0 ? 'green': 'red'}>
+              <CurrencyFormat value={((stock.soldPrice - stock.price)*stock.share).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
+            <td className = {(stock.soldPrice - stock.price) > 0 ? 'green': 'red'}>{(((stock.soldPrice - stock.price)/stock.price)*100).toFixed(2)}%</td>
             <Button size= 'sm' color='danger' onClick={this.removeSoldStock.bind(this, stock)}>Delete</Button>
             <Button size= 'sm' color='primary' onClick={this.onClickEditButton.bind(this, stock)}>Edit</Button>
             </tr>

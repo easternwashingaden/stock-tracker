@@ -11,7 +11,8 @@ import DatePicker from "react-datepicker";
 import './App.css'
 import DeleteSuccessAlert from './DeleteSuccessAlert';
 import AddToSaleListSuccessAlert from './AddToSaleListSuccessAlert';
-import UpdateSuccessAlert from './UpdateSuccessAlert'
+import UpdateSuccessAlert from './UpdateSuccessAlert';
+import CurrencyFormat from 'react-currency-format';
 class Stock extends Component {
     emptySaleItem = {
         ticker: "",
@@ -185,8 +186,10 @@ class Stock extends Component {
     }
 
     async loadPrices(tickers){
-        const API_KEY = '6D6O68MT7WRRNJOM';
+        const API_KEY = "pk_73f0d094a486473b8cf35ff01523599f";
         axios.all(tickers.map(stock => axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stock.ticker}&outputsize=compact&apikey=${API_KEY}`)))
+        
+        // axios.all(tickers.map(stock => axios.get(`https://sandbox.iexapis.com/stable/stock/${stock.ticker}/quote?token=${API_KEY}`)))
             .then (axios.spread((...res) => {
                 console.log(res);
                 
@@ -197,8 +200,15 @@ class Stock extends Component {
                         return allPrices
                     }  
                 })   
+                // const latestPrices = res.map(element =>{
+                //     return element.data['latestPrice']
+                     
+                // })
+
+                // const latestPrice = res.data["latestPrice"]
                 this.setState({ currentPrices: latestPrices, isLoading : false })   
             }))
+
 
             .catch((error) =>{
                 console.log(error)
@@ -342,12 +352,22 @@ class Stock extends Component {
             <tr key = {stock.id} >
             <td>{(stock.ticker).toUpperCase()}</td>
             <td>{stock.share}</td>
-            <td>${stock.price}</td>
-            <td>${currentPrices[i]}</td>
-            <td>${(stock.share * parseFloat(stock.price)).toFixed(2)}</td>
-            <td>${(stock.share * parseFloat(currentPrices[i])).toFixed(2)}</td>
-            <td>${((currentPrices[i] - stock.price)*stock.share).toFixed(2)}</td>
-            <td>%{((((currentPrices[i] - stock.price)*stock.share)/(stock.share * parseFloat(stock.price)))*100).toFixed(2)}</td>
+            <td>
+                <CurrencyFormat value={parseFloat(stock.price).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
+            <td>
+                <CurrencyFormat value={parseFloat(currentPrices[i]).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
+            <td>
+                <CurrencyFormat value={(stock.share * parseFloat(stock.price)).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
+            <td>
+                <CurrencyFormat value={(stock.share * parseFloat(currentPrices[i])).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
+            <td className = {(currentPrices[i] - stock.price) > 0 ? 'green': 'red'}>
+            <CurrencyFormat value={((currentPrices[i] - stock.price)*stock.share).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
+            </td>
+            <td className = {(currentPrices[i] - stock.price) > 0 ? 'green': 'red'}>{((((currentPrices[i] - stock.price)*stock.share)/(stock.share * parseFloat(stock.price)))*100).toFixed(2)}%</td>
             {/* <td>{((parseFloat(currentPrices[i]) - parseFloat(stock.price)/(stock.share * stock.price))).toFixed(2)}</td> */}
             <td><Moment date = {stock.purchasedDate} format = "YYYY/MM/DD"/></td>
             <Button size= 'sm' color='danger' onClick={this.removePurchasedStock.bind(this, stock)}>Delete</Button>
@@ -368,7 +388,8 @@ class Stock extends Component {
                     {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
                     {this.state.alertMessageForSale === "success" ? <AddToSaleListSuccessAlert/> : null}
                     <Container>
-                        <h3 style = {{textAlign: 'center', fontWeight: 'bold'}}>Stock Holdings</h3>
+
+                        <h3 style = {{textAlign: 'center', fontWeight: 'bold', margin: '2rem'}}>Stock Holdings</h3>
                         <br></br>
                         <Table style = {{width: '120%'}}className= 'table table-striped table-hover center w-auto'>
                             <thead style = {{background: "lightseagreen"}}>

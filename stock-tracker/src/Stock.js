@@ -92,7 +92,7 @@ class Stock extends Component {
 
     handleEdit(){
         const {editingItem} = this.state;
-        axios.put(`/api/stock/${editingItem.id}`, editingItem)
+        axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/stock/${editingItem.id}`, editingItem)
         .then((response) =>{
             const updatedData = this.state.Stocks;
                 updatedData.push(response.data);

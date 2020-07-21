@@ -32,7 +32,7 @@ class AddCapital extends Component {
   async handleSumbit(event){
     
     const {item} = this.state;
-    axios.post(`/api/capitals`, item)
+    axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/capitals`, item)
     .then((response) => {
       const updatedData = this.state.capitals;
       updatedData.push(response.data);
@@ -67,11 +67,11 @@ class AddCapital extends Component {
     this.setState({item});
   }
   async componentDidMount(){
-    const response = await fetch('/api/capitals');
+    const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals');
     const body= await response.json();
     this.setState({capitals : body, isLoading : false});
 
-    const responseCapitals= await fetch('/api/capitals');
+    const responseCapitals= await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals');
     const bodyCapitals = await responseCapitals.json();
     this.setState({capitals : bodyCapitals , isLoading :false});
     console.log(bodyCapitals);

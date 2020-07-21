@@ -84,7 +84,7 @@ class Portfolio extends Component {
     }
 
     async getStockArray(){
-        const res = await axios.get('/api/stocks');
+        const res = await axios.get('https://tithvorlak-stock-tracker.herokuapp.com/api/stocks');
         this.setState({Stocks: res.data});
         await this.loadPrices(res.data);
         await this.getStockTickers(res.data);
@@ -94,7 +94,7 @@ class Portfolio extends Component {
     async componentDidMount(){
 
         await this.getStockArray();
-        const response = await fetch('/api/stocks');
+        const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/stocks');
         const body= await response.json();
         this.setState({Stocks : body, isLoading : false });
         await this.getCapitalArray()
@@ -148,7 +148,7 @@ class Portfolio extends Component {
     }
 
     async remove(id){
-        axios.delete(`/api/stock/${id}`)
+        axios.delete(`https://tithvorlak-stock-tracker.herokuapp.com/api/stock/${id}`)
         .then((response)=>{
             let updatedStocks = [...this.state.Stocks].filter(i => i.id !== id);
             this.setState({Stocks : updatedStocks});
@@ -159,12 +159,12 @@ class Portfolio extends Component {
     }
 
     async getCapitalArray(){
-      const res = await axios.get('/api/capitals');
+      const res = await axios.get('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals');
       this.setState({capitals: res.data});  
     }
 
     async getSaleArray(){
-      const res = await axios.get('/api/sales');
+      const res = await axios.get('https://tithvorlak-stock-tracker.herokuapp.com/api/sales');
       this.setState({sales: res.data});  
       const allSales = res.data.map((sale =>{
         return  (sale.share * sale.soldPrice - sale.share * sale.price)

@@ -21,44 +21,91 @@ class AddCapital extends Component {
         isLoading : true,
         capitals : [],
         date : new Date(),
-        item : this.emptyItem,
+        item : {},
         alert_message: "",
+        errors: {}
     }
     this.handleSumbit = this.handleSumbit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
   }
-  
-  async handleSumbit(event){
+
+  validateForm() {
+
+    let item = this.state.item;
+    let errors = {};
+    let formIsValid = true;
+
+    if (!item["value"]) {
+      formIsValid = false;
+      errors["value"] = "*Please enter the value.";
+    }
+
+    if (typeof item["value"] !== "undefined") {
+      if (item["value"] <= 0) {
+        formIsValid = false;
+        errors["value"] = "*Please enter a valid value";
+      }
+    }
+
+    if (!item["addedDate"]) {
+      formIsValid = false;
+      errors["addedDate"] = "*Please pick a date.";
+    }
+
     
-    const {item} = this.state;
-    axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/capitals`, item)
-    .then((response) => {
-      const updatedData = this.state.capitals;
-      updatedData.push(response.data);
-      this.setState({
-        capitals: updatedData,
-        alert_message: "success"
-      })
-      
-    })
+    if (!item["description"]) {
+      formIsValid = false;
+      errors["description"] = "*Please enter the description.";
+    }
 
-    .catch((error) =>{
-      this.setState({alert_message : "error"})
+    this.setState({
+      errors: errors
     });
+    return formIsValid;
 
+  }
+  
+  handleSumbit(event){
     event.preventDefault();
-    event.target.reset();     
+    if (this.validateForm()){
+      const {item} = this.state;
+      axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/capitals`, item)
+      .then((response) => {
+        const updatedData = this.state.capitals;
+        updatedData.push(response.data);
+        this.setState({
+          capitals: updatedData,
+          alert_message: "success"
+        })
+        
+      })
+
+      .catch((error) =>{
+        this.setState({alert_message : "error"})
+      });
+
+      event.target.reset();
+    }     
   }
 
-  handleChange(event){
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    let item={...this.state.item};
-    item[name]= value;
-    this.setState({item});
-    console.log(this.state)
+  // handleChange(event){
+  //   const target = event.target;
+  //   const value = target.value;
+  //   const name = target.name;
+  //   let item={...this.state.item};
+  //   item[name]= value;
+  //   this.setState({item});
+  //   console.log(this.state)
+  // }
+
+  handleChange(e) {
+    let item = this.state.item;
+    item[e.target.name] = e.target.value;
+    this.setState({
+      item
+    });
+
   }
 
   handleDateChange(date){
@@ -99,18 +146,20 @@ class AddCapital extends Component {
             <Form onSubmit={this.handleSumbit}>
               <FormGroup>
                 <lable for='value'>Value</lable>
-                
-                <input type='text' name='value' id='value' className = "form-control" onChange={this.handleChange}/>
+                <input type='text' name='value' id='value' value={this.state.item.value}  className = "form-control" onChange={this.handleChange}/>
+                <div className="errorMsg">{this.state.errors.value}</div>
               </FormGroup>
 
               <FormGroup>
                 <lable for='description'>Description</lable>
-                <input type='text' name='description' id='description' className = "form-control" onChange={this.handleChange}/>
+                <input type='text' name='description' id='description' value={this.state.item.description} className = "form-control" onChange={this.handleChange}/>
+                <div className="errorMsg">{this.state.errors.description}</div>
               </FormGroup>
 
               <FormGroup className='col-md-4 mb-3'>
                 <lable for='addedDate'>Added Date</lable>
-                <DatePicker selected={this.state.item.addedDate} className = "form-control" onChange={this.handleDateChange}/>              
+                <DatePicker selected={this.state.item.addedDate} className = "form-control" onChange={this.handleDateChange}/> 
+                <div className="errorMsg">{this.state.errors.addedDate}</div>             
               </FormGroup>
 
               <div className='row'>

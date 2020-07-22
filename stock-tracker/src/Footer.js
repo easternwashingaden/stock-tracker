@@ -14,7 +14,7 @@ class Footer extends Component {
          
 
         	
-        {/* <div style={{textAlign: 'center', padding : "4rem", background: "lightgray", fontWeight: "bold", maxHeight: ''} }>
+        <div style={{textAlign: 'center', padding : "3rem", background: "lightgray", fontWeight: "bold", marginTop: '15rem'} }>
           <div className="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center">
             <p>© 2020 Tithvorlak Mok - Copyright All right Reversed</p>
             <div className="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5" id="pedding">
@@ -28,22 +28,9 @@ class Footer extends Component {
           </div>
         </div>
           
-        </div>	 */}
+        </div>	
 
-        <footer className="footer p-t-1 bg-dark app-footer">
-        <div className="container d-flex flex-column text-center">
-          <a href="/trailmix-live/" className="align-self-center" >           
-            <img
-              alt="Trail Mix Live"
-              src="https://lh3.googleusercontent.com/pw/ACtC-3dcvjHB07jx8qG3JCbZRfxZTH6jnB2DPr3LeRoKYcI5QAl3M9xk9mXTYdrME2swfPhRz7XipbrIAotgXvXJPeec5WGOjou-vaQn0TJzGjEloWVsdxB-51w8NlIUOtIxxLlNSCJPuvmGXh-th_tF2Uw=s200-no?authuser=0"
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
-            /> 
-          </a>
-          <p className="text-light text-muted" > TRAIL MIX LIVE © 2020 </p>
-        </div>
-      </footer>
+        
       </div>
     
     );

@@ -90,25 +90,55 @@ class Stock extends Component {
         console.log(stock)
     }
 
-    handleEdit(){
-        const {editingItem} = this.state;
+    handleEdit(editingItem, event){
+        event.preventDefault();
+        // const {editingItem} = this.state;
         axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/stock/${editingItem.id}`, editingItem)
         .then((response) =>{
             const updatedData = this.state.Stocks;
-                updatedData.push(response.data);
-                this.setState({
-                Stock: updatedData,
+                // updatedData.push(response.data);
+            this.setState({
+                // Stock: updatedData,
                 isInEditMode : false,
                 alertUpdateMessage: "success"
-                
             })
-        })
+            console.log(this.state.capitals)
+            const editingCapital = this.state.capitals.find((element => element.refId === editingItem.id && element.description === "Purchased stocks"))
+            
+            console.log(editingCapital);
+        // 
+            const editingItemOnCapital = {
+                id: editingCapital.id,
+                value: editingItem.share*editingItem.price*(-1),
+                description: "Purchased stocks",
+                addedDate: editingItem.purchasedDate,
+                refId: editingCapital.refId
+            }
+
+            console.log(editingItemOnCapital)
+            axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/capital/${editingCapital.id}`, editingItemOnCapital)
+                .then((response) => {
+                    const updatedData = this.state.capitals;
+                    updatedData.push(response.data);
+                    this.setState({
+                        capitals: updatedData,
+                        alert_message: "success"
+                    })
+      
+                })
+                .catch((error)=>{
+                    this.setState({
+                    alert_message: "error"
+                    })
+                }) 
+            })
         .catch((error) =>{
             this.setState({
                 alertUpdateMessage: "error"
             })
         })
         // this.setState({alertUpdateMessage: "success"})
+        console.log(this.state)
     }
 
     onAddToSaleButtonClick(item, event){ 
@@ -177,9 +207,9 @@ class Stock extends Component {
 
     async componentDidMount(){
         await this.getStockArray();
-        const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/stocks');
-        const body= await response.json();
-        this.setState({Stocks : body, isLoading : false});
+        // const response = await fetch('https://tithvorlak-stock-tracker.herokuapp.com/api/stocks');
+        // const body= await response.json();
+        // this.setState({Stocks : body, isLoading : false});
         await this.getSaleArray();
         await this.getCapitalArray();
 
@@ -306,10 +336,11 @@ class Stock extends Component {
     renderEditView(){
         const {editingItem} = this.state;
         
-        return(<Container>
-            <h4>Edit Stock</h4>
+        return(
+            <Container className = " card card-body px-lg-6">
+            <h4 className="card-header info-color white-text text-center py-4" style = {{background: "lightseagreen"}}>Edit Stock</h4>
 
-            <Form onSubmit={this.handleEdit}>
+            <Form onSubmit={this.handleEdit.bind(this, editingItem)}>
               <FormGroup>
                 <lable for='ticker'>Ticker</lable>
                 
@@ -383,14 +414,16 @@ class Stock extends Component {
             <section>
                 <div>
                     <AppNav/>
-                    {/* <br></br> */}
                     {this.state.alertUpdateMessage === "success" ? <UpdateSuccessAlert/> : null}
                     {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
-                    {this.state.alertMessageForSale === "success" ? <AddToSaleListSuccessAlert/> : null}
+                    {this.state.alertMessageForSale === "success" ? <AddToSaleListSuccessAlert/> : null} 
+                    
+                    <h3 style = {{textAlign: 'center', fontWeight: 'bold', margin: '2rem'}}>Stock Holdings</h3>
+                    <br></br>
+                    {Stocks.length > 0 ?
                     <Container>
 
-                        <h3 style = {{textAlign: 'center', fontWeight: 'bold', margin: '2rem'}}>Stock Holdings</h3>
-                        <br></br>
+                        
                         <Table style = {{width: '120%'}}className= 'table table-striped table-hover center w-auto'>
                             <thead style = {{background: "lightseagreen"}}>
                             <tr>
@@ -411,6 +444,9 @@ class Stock extends Component {
                             </tbody>
                         </Table>
                     </Container>
+                    :
+                    <p style = {{textAlign: 'center', marginTop: '2rem', fontWeight: 'bold'}}>No Results</p>
+                    }
                     <AddSale isAddSaleFormOpen = {this.state.isAddSaleFormOpen}>
                             <Container className = " card card-body px-lg-6">
                             <h5 className="card-header info-color white-text text-center py-4" style = {{background: "lightseagreen"}}>

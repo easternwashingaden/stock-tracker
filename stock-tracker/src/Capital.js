@@ -7,8 +7,8 @@ import axios from 'axios';
 import "react-datepicker/dist/react-datepicker.css";
 import AddSale from './AddSale';
 import {Form, FormGroup, Button, Container } from 'reactstrap'
-import {Link} from 'react-router-dom';
-import DatePicker from "react-datepicker";
+// import {Link} from 'react-router-dom';
+// import DatePicker from "react-datepicker";
 import './App.css'
 import DeleteSuccessAlert from './DeleteSuccessAlert';
 import AddToSaleListSuccessAlert from './AddToSaleListSuccessAlert';
@@ -43,6 +43,7 @@ class Capital extends Component {
 
     }
 
+    
     onClickEditButton(stock){
         
         this.setState({ 
@@ -131,33 +132,38 @@ class Capital extends Component {
     renderEditView(){
         const {editingItem} = this.state;
         
-        return(<Container>
-            <h4>Edit Stock</h4>
+        return(
+            <div>
+                <AppNav/>
+                <br></br>
+                <Container className = " card card-body px-lg-6">
+                <h4 className="card-header info-color white-text text-center py-4" style = {{background: "lightseagreen"}}>Edit Record</h4>
+                <br></br>
+                <Form onSubmit={this.handleEdit}>
+                <FormGroup>
+                    <lable for='value'>Value</lable>
+                    
+                    <input type='text' value = {editingItem.value} name='value' id='value' className = "form-control" onChange={this.handleEditChange}/>
+                </FormGroup>
 
-            <Form onSubmit={this.handleEdit}>
-              <FormGroup>
-                <lable for='value'>Value</lable>
-                
-                <input type='text' value = {editingItem.value} name='value' id='value' className = "form-control" onChange={this.handleEditChange}/>
-              </FormGroup>
+                <FormGroup>
+                    <lable for='description'>Value</lable>
+                    
+                    <input type='text' value = {editingItem.description} name='description' id='value' className = "form-control" onChange={this.handleEditChange}/>
+                </FormGroup>
 
-              <FormGroup>
-                <lable for='description'>Value</lable>
-                
-                <input type='text' value = {editingItem.description} name='description' id='value' className = "form-control" onChange={this.handleEditChange}/>
-              </FormGroup>
+                <div className='row'>
+                <FormGroup className='col-md-4 mb-3'>
+                    <lable for='addedDate'>Added Date</lable>
+                    <input type='text' value = {editingItem.addedDate} name = 'addedDate' id='addedDate' className = "form-control" onChange={this.handleEditChange}/>
+                </FormGroup>
+                </div>
+                    <Button color='primary' type='submit'>Save </Button>{' '}
+                    <Button color='danger' onClick ={(e)=> this.setState({isInEditMode: false})}>Cancel</Button>
+                </Form>
 
-              <div className='row'>
-              <FormGroup className='col-md-4 mb-3'>
-                <lable for='addedDate'>Added Date</lable>
-                <input type='text' value = {editingItem.addedDate} name = 'addedDate' id='addedDate' className = "form-control" onChange={this.handleEditChange}/>
-              </FormGroup>
-              </div>
-                <Button color='primary' type='submit'>Save </Button>{' '}
-                <Button color='danger' onClick ={(e)=> this.setState({isInEditMode: false})}>Cancel</Button>
-            </Form>
-
-          </Container>
+                </Container>
+            </div>
         )
 
     }

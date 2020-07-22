@@ -14,10 +14,10 @@ class Footer extends Component {
          
 
         	
-        <div style={{textAlign: 'center', padding : "3rem", background: "lightgray", fontWeight: "bold", marginTop: '15rem'} }>
+        <div style={{textAlign: 'center', padding : "1rem", background: "lightgray", marginTop: '20rem'} }>
           <div className="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center">
             <p>© 2020 Tithvorlak Mok - Copyright All right Reversed</p>
-            <div className="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5" id="pedding">
+            <div>
             <ul className="list-unstyled list-inline social text-center">
               <li className="list-inline-item"><a href="https://www.facebook.com/"><i className="fa fa-facebook"></i></a></li>
               <li className="list-inline-item"><a href="http://twitter.com/"><i className="fa fa-twitter"></i></a></li>

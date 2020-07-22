@@ -351,8 +351,9 @@ class Portfolio extends Component {
 
                       <div class="w-100"></div>
                       <div className="col-8" style = {{fontWeight: 'bold'}}>
+                        <h6 className = 'center' style = {{marginTop: "2rem", fontWeight: 'bold'}}>Purchased Stocks List</h6>
+                        {Stocks.length > 0 ? 
                         <Container className = "border-right">
-                          <h6 className = 'center' style = {{marginTop: "2rem", fontWeight: 'bold'}}>Purchased Stocks List</h6>
                           <Table className= 'table table-striped table-hover w-atuo small'>
                             <thead style = {{background: "lightseagreen"}}>
                             <tr>
@@ -369,6 +370,8 @@ class Portfolio extends Component {
                             </tbody>
                           </Table>
                         </Container>
+                        :
+                        <p style = {{textAlign: 'center', marginTop: '2rem', fontWeight: 'bold'}}>No Results</p>}
                       </div>
                       <div class="col">
                         <h6 style = {{textAlign: "center" , marginTop: "2rem", fontWeight: 'bold'}}>Sale Graphical History</h6>
@@ -385,7 +388,7 @@ class Portfolio extends Component {
                         layout={{width: 420, height: 490}}
                       />
                       :
-                      <h2 className="text-center">No Results</h2>
+                      <p style = {{textAlign: 'center', marginTop: '2rem', fontWeight: 'bold'}}>No Results</p>
                       }
                       </div>
                     </div>

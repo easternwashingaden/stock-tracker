@@ -16,17 +16,17 @@ class AppNav extends Component {
                                 <NavLink href="/" >Home</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink href="/about" >About</NavLink>
+                                <NavLink href="/about" >Contact</NavLink>
                             </NavItem>
                             <NavItem>
                                 <NavLink href="/portfolio">Portfolio</NavLink>
                             </NavItem>
-                            <NavDropdown title="Stocks" id="basic-nav-dropdown">
+                            <NavDropdown style = {{fontWeight: 'bold', fontSize: 'large'}} title="Stocks" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/stock">Add Stock</NavDropdown.Item>
                                 <NavDropdown.Item href="/stocks">Stock Holdings</NavDropdown.Item>
                                 <NavDropdown.Item href="/history">Sale History</NavDropdown.Item>
                             </NavDropdown>
-                            <NavDropdown title="Cash" id="basic-nav-dropdown">
+                            <NavDropdown style = {{fontWeight: 'bold', fontSize: 'large'}} title="Cash" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/capital">Add Cash</NavDropdown.Item>
                                 <NavDropdown.Item href="/capitals">Capital History</NavDropdown.Item>
                             </NavDropdown>

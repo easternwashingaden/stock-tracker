@@ -28,14 +28,14 @@
   color: #61dafb
 }
 
-@keyframes App-logo-spin {
+/* @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
   }
-}
+} */
 
 #background-color{
   background-color: lightseagreen;
@@ -53,8 +53,10 @@
   padding-left:30px;
   padding-right:30px;
   font-family: Arial, Helvetica, sans-serif;
-  color: black;
-  /* font-weight: bold; */
+  font-weight: bold;
+  font-size: large;
+
+
 }
   
 /* control slid images */
@@ -123,4 +125,15 @@ footer {
 
 .app-footer {
   padding: 1rem 1rem 0rem 1rem;
+}
+
+/* field validation */
+.errorMsg {
+  color: #cc0000;
+  margin-bottom: 12px;
+}
+
+.sucessMsg {
+  color: #6B8E23;
+  margin-bottom: 10px;
 }

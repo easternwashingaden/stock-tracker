@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 import DeleteSuccessAlert from './DeleteSuccessAlert';
 import './App.css';
 import CurrencyFormat from 'react-currency-format';
+import UpdateSuccessAlert from './UpdateSuccessAlert';
 
 class Sale extends Component {
   emptySaleItem = {
@@ -31,7 +32,8 @@ class Sale extends Component {
         editingItem: this.emptySaleItem,
         date: new Date(),
         alertMessage: "",
-        capitals: []
+        capitals: [],
+        alertUpdateMessage: "",
     }
     this.handleChange = this.handleChange.bind(this);
     this.updateItem = this.updateItem.bind(this);
@@ -76,46 +78,54 @@ class Sale extends Component {
     })
   }
 
-  updateItem(editingItem, event){
-    event.preventDefault();
+  updateItem(editingItem,event){
+    event.preventDefault(); 
     // const {editingItem} = this.state;
     axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/sale/${editingItem.id}`, editingItem)
     .then((response) =>{
       const updatedData = this.state.Sales;
           updatedData.push(response.data);
       //now we know the reference of row that need to be updated in the capital records,
-    
+      this.setState({
+        Sales: updatedData,
+        isInEditMode : false,
+        alertUpdateMessage: "success"
+      })
+      console.log(this.state.capitals)
       const editingCapital = this.state.capitals.find((element => element.refId === editingItem.id && element.description === "Sold stocks"))
-
+      
       console.log(editingCapital);
       // 
       const editingItemOnCapital = {
+        id: editingCapital.id,
         value: editingItem.share*editingItem.soldPrice,
         description: "Sold stocks",
         addedDate: editingItem.soldDate,
         refId: editingCapital.refId
       }
+
+      
+      console.log(editingItemOnCapital)
       axios.put(`https://tithvorlak-stock-tracker.herokuapp.com/api/capital/${editingCapital.id}`, editingItemOnCapital)
         .then((response) => {
             const updatedData = this.state.capitals;
+            updatedData.push(response.data);
             this.setState({
-            capitals: updatedData,
-            alert_message: "success"
+              capitals: updatedData,
+              alert_message: "success"
+          })
+      
         })
-      this.setState({
-        Sales: updatedData,
-        isInEditMode : false
+        .catch((error)=>{
+          this.setState({
+            alert_message: "error"
+          })
+        }) 
       })
-    })
-      .catch((error)=>{
-        console.log("Hiiii 3333")
-        this.setState({
-          alert_message: "error"
-        })
-      })     
-    })
     .catch((error) =>{
-      console.log(error.message)
+      this.setState({
+        alertUpdateMessage: "error"
+      })
     })
   }
 
@@ -141,6 +151,21 @@ class Sale extends Component {
     const res = await axios.get('https://tithvorlak-stock-tracker.herokuapp.com/api/capitals');
     this.setState({capitals: res.data});  
   }
+
+  async removeCapital(id){
+    axios.delete(`https://tithvorlak-stock-tracker.herokuapp.com/api/capital/${id}`)
+    .then((response)=>{
+        let updatedCapitals = [...this.state.capitals].filter(i => i.id !== id);
+        this.setState({
+            capitals : updatedCapitals,
+            alertMessage: 'success'
+        });
+    })
+    .catch((error) =>{
+        console.log(error);
+    })
+}
+
 
   renderEditView(){
     const {editingItem} = this.state;
@@ -265,28 +290,32 @@ class Sale extends Component {
                   <AppNav/>
                   <br></br>
                   {this.state.alertMessage === "success" ? <DeleteSuccessAlert/> : null}
+                  <h3 style = {{textAlign: 'center', fontWeight: 'bold'}}>Purchase/Sale Records</h3>
+                  <br></br>
+                  {Sales.length > 0 ?
                   <Container>
-                      <h3 style = {{textAlign: 'center', fontWeight: 'bold'}}>Purchase/Sale Records</h3>
-                      <br></br>
-                      <Table className= 'table table-striped table-hover center'>
-                          <thead className="w-auto p-3" style = {{background: "lightgray"}}>
-                          <tr>
-                              <th>Ticker</th>
-                              <th>Share</th>
-                              <th className="w-auto p-3">Purchased Price</th>
-                              <th className="w-auto p-3">Sold Price</th>
-                              <th>Purchased Date</th>
-                              <th>Sold Date</th>
-                              <th className="w-auto p-3">Gain/Loss</th>
-                              <th className="w-auto p-3">%Gain/Loss</th>
-                              <th className = "w-100 p-3">Action</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                              {rows}
-                          </tbody>
+                    <Table className= 'table table-striped table-hover center'>
+                        <thead className="w-auto p-3" style = {{background: "lightgray"}}>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Share</th>
+                            <th className="w-auto p-3">Purchased Price</th>
+                            <th className="w-auto p-3">Sold Price</th>
+                            <th>Purchased Date</th>
+                            <th>Sold Date</th>
+                            <th className="w-auto p-3">Gain/Loss</th>
+                            <th className="w-auto p-3">%Gain/Loss</th>
+                            <th className = "w-100 p-3">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {rows}
+                        </tbody>
                       </Table>
                   </Container>
+                  :
+                  <p style = {{textAlign: 'center', marginTop: '2rem', fontWeight: 'bold'}}>No Results</p>
+                }
               </div>
           </section>
 

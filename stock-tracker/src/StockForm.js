@@ -25,10 +25,12 @@ class StockForm extends Component {
         isLoading : true,
         Stocks : [],
         date : new Date(),
-        item : this.emptyItem,
+        item : {},
         alert_message: "",
         capitals: [], 
         alertMessageForSale: "",
+        errors: {}
+
 
     }
     this.handleSumbit = this.handleSumbit.bind(this);
@@ -36,34 +38,93 @@ class StockForm extends Component {
     this.handleDateChange = this.handleDateChange.bind(this);
   }
   
-  async handleSumbit(event){
+  handleSumbit(event){
+    event.preventDefault();
     
     const {item} = this.state;
-    axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/stocks`, item)
-    .then((response) => {
-      const updatedData = this.state.Stocks;
-      updatedData.push(response.data);
+    if (this.validateForm()){
+      axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/stocks`, item)
+      .then((response) => {
+        const updatedData = this.state.Stocks;
+        updatedData.push(response.data);
 
-    // subtract from cash from the capitals
-      const addingItem = {
-        value: item.share*item.price * (-1),
-        description: "Purchased stocks",
-        addedDate: item.purchasedDate,
-        refId: updatedData[updatedData.length - 1].id
-      }
-      this.addSaleRecordToCapital(addingItem);
-      this.setState({alertMessageForSale: "success", Stocks: updatedData, alert_message: "success"})
-    
-    })
-    .catch((error) =>{
-      this.setState({alert_message : "error"})
-    });
-    event.preventDefault();
-    // console.log(this.state);
-    // this.props.history.push('/stocks');
-    // console.log(this.Stocks)
-    event.target.reset();      
+      // subtract from cash from the capitals
+        const addingItem = {
+          value: item.share*item.price * (-1),
+          description: "Purchased stocks",
+          addedDate: item.purchasedDate,
+          refId: updatedData[updatedData.length - 1].id
+        }
+        this.addSaleRecordToCapital(addingItem);
+        this.setState({alertMessageForSale: "success", Stocks: updatedData, alert_message: "success"})
+      
+      })
+      .catch((error) =>{
+        this.setState({alert_message : "error"})
+      });
+      
+      // console.log(this.state);
+      // this.props.history.push('/stocks');
+      // console.log(this.Stocks)
+      event.target.reset();  
+    }    
   }
+  
+  //Validate feilds 
+
+  validateForm() {
+
+    let item = this.state.item;
+    let errors = {};
+    let formIsValid = true;
+
+    if (!item["ticker"]) {
+      formIsValid = false;
+      errors["ticker"] = "*Please enter the stock ticker.";
+    }
+
+    if (typeof item["ticker"] !== "undefined") {
+      if (!item["ticker"].match(/^[a-zA-Z ]*$/)) {
+        formIsValid = false;
+        errors["ticker"] = "*Please enter alphabet characters only.";
+      }
+    }
+
+    if (!item["share"]) {
+      formIsValid = false;
+      errors["share"] = "*Please enter the number of shares.";
+    }
+
+    if (typeof item["share"] !== "undefined") {
+      if (!Number.isInteger(item["share"]) && item["share"] <= 0) {
+        formIsValid = false;
+        errors["share"] = "*Please enter a valid number of shares.";
+      }
+    }
+    if (!item["price"]) {
+      formIsValid = false;
+      errors["price"] = "*Please enter the purchase price.";
+    }
+
+    if (typeof item["price"] !== "undefined") {
+      if (item["price"] <= 0 ) {
+        formIsValid = false;
+        errors["password"] = "*Please enter a valid purchase price.";
+      }
+    }
+
+    if (!item["purchasedDate"]) {
+      formIsValid = false;
+      errors["purchasedDate"] = "*Please pick a date.";
+    }
+
+    this.setState({
+      errors: errors
+    });
+    return formIsValid;
+
+  }
+
 
   addSaleRecordToCapital(item){
     axios.post(`https://tithvorlak-stock-tracker.herokuapp.com/api/capitals`, item)
@@ -84,14 +145,23 @@ class StockForm extends Component {
     })
 }
 
-  handleChange(event){
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    let item={...this.state.item};
-    item[name]= value;
-    this.setState({item});
-    console.log(this.state)
+  // handleChange(event){
+  //   const target = event.target;
+  //   const value = target.value;
+  //   const name = target.name;
+  //   let item={...this.state.item};
+  //   item[name]= value;
+  //   this.setState({item});
+  //   console.log(this.state)
+  // }
+
+  handleChange(e) {
+    let item = this.state.item;
+    item[e.target.name] = e.target.value;
+    this.setState({
+      item
+    });
+
   }
 
   handleDateChange(date){
@@ -139,27 +209,27 @@ class StockForm extends Component {
             <Form onSubmit={this.handleSumbit}>
               <FormGroup>
                 <lable for='ticker'>Ticker</lable>
-                {/* <select className = "form-control">
-                  {optionList}
-                </select> */}
-                
-                <input type='text' name='ticker' id='ticker' className = "form-control" onChange={this.handleChange}/>
+                <input type='text' name='ticker' id='ticker' value={this.state.item.ticker} className = "form-control" onChange={this.handleChange}/>
+                <div className="errorMsg">{this.state.errors.ticker}</div>
               </FormGroup>
 
               <FormGroup>
                 <lable for='share'>Share</lable>
-                <input type='text' name='share' id='share' className = "form-control" onChange={this.handleChange}/>
+                <input type='text' name='share' id='share' value={this.state.item.share} className = "form-control" onChange={this.handleChange}/>
+                <div className="errorMsg">{this.state.errors.share}</div>
               </FormGroup>
 
               <FormGroup>
                 <lable for='price'>Purchased Price</lable>
-                <input type='text' name='price' id='price' className = "form-control" onChange={this.handleChange}/>
+                <input type='text' name='price' id='price' value={this.state.item.price} className = "form-control" onChange={this.handleChange}/>
+                <div className="errorMsg">{this.state.errors.price}</div>
               </FormGroup>
 
               <div className='row'>
               <FormGroup className='col-md-4 mb-3'>
                 <lable for='purcashedDate'>Purchased Date</lable>
-                <DatePicker selected={this.state.item.purchasedDate} className = "form-control" onChange={this.handleDateChange}/>              
+                <DatePicker selected={this.state.item.purchasedDate} className = "form-control" onChange={this.handleDateChange}/>
+                <div className="errorMsg">{this.state.errors.purchasedDate}</div>              
               </FormGroup>
               </div>
                 <Button color='primary' type='submit'>Save </Button>{' '}

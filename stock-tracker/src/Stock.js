@@ -181,7 +181,7 @@ class Stock extends Component {
             updatedData.push(response.data);
             this.setState({
             capitals: updatedData,
-            alert_message: "success"
+            // alert_message: "success"
             })
 
         })
@@ -393,7 +393,7 @@ class Stock extends Component {
             <td>
                 <CurrencyFormat value={parseFloat(stock.price).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
             </td>
-            <td>
+            <td style = {{color: 'blue'}}>
                 <CurrencyFormat value={parseFloat(currentPrices[i]).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
             </td>
             <td>

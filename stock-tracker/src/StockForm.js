@@ -66,7 +66,11 @@ class StockForm extends Component {
       // console.log(this.state);
       // this.props.history.push('/stocks');
       // console.log(this.Stocks)
-      event.target.reset();  
+      // event.target.reset();  
+        item["ticker"] = "";
+        item["share"] = "";
+        item["price"] = "";
+        // item["share"] = "";
     }    
   }
   

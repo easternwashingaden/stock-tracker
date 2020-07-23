@@ -149,7 +149,7 @@ class Capital extends Component {
                 <FormGroup>
                     <lable for='description'>Value</lable>
                     
-                    <input type='text' value = {editingItem.description} name='description' id='value' className = "form-control" onChange={this.handleEditChange}/>
+                    <input type='text' value = {editingItem.description} name='description' id='description' className = "form-control" onChange={this.handleEditChange}/>
                 </FormGroup>
 
                 <div className='row'>

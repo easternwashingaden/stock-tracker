@@ -56,7 +56,7 @@ class StockForm extends Component {
           refId: updatedData[updatedData.length - 1].id
         }
         this.addSaleRecordToCapital(addingItem);
-        this.setState({alertMessageForSale: "success", Stocks: updatedData, alert_message: "success"})
+        this.setState({ Stocks: updatedData, alert_message: "success"})
       
       })
       .catch((error) =>{

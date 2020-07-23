@@ -130,7 +130,14 @@ class AddCapital extends Component {
     const {capitals, isLoading} = this.state;
 
     if (isLoading)
-      return(<div>Loading...</div>)
+      return(
+        <span>
+            <div>Loading...</div>
+            <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+            </div>
+        </span>
+      )
 
     
     return (

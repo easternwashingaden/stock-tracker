@@ -15,20 +15,26 @@ class App extends Component {
   state = {  }
   render() { 
     return (
-      <Router>
-        <Switch>
-          <Route path='/'exact={true} component={Home}/>
-          <Route path='/portfolio' exact={true} component={Portfolio}/>
-          <Route path='/stocks' exact={true} component={Stock}/>
-          <Route path='/stock' exact={true} component={StockForm}/>
-          <Route path='/history' exact={true} component={Sale}/>
-          <Route path='/stockperformance' exact={true} component={StockPerformance}/>
-          <Route path='/capital' exact={true} component={AddCapital}/>
-          <Route path='/capitals' exact={true} component={Capital}/>
-          <Route path='/about' exact={true} component={About}/>
-        </Switch>
-        <Footer/>
-      </Router>
+      <>
+      <div className = "min-height">
+        
+        <Router>
+          <Switch>
+            <Route path='/'exact={true} component={Home}/>
+            <Route path='/portfolio' exact={true} component={Portfolio}/>
+            <Route path='/stocks' exact={true} component={Stock}/>
+            <Route path='/stock' exact={true} component={StockForm}/>
+            <Route path='/history' exact={true} component={Sale}/>
+            <Route path='/stockperformance' exact={true} component={StockPerformance}/>
+            <Route path='/capital' exact={true} component={AddCapital}/>
+            <Route path='/capitals' exact={true} component={Capital}/>
+            <Route path='/about' exact={true} component={About}/>
+          </Switch>
+          
+        </Router>
+      </div>
+      <Footer/>
+      </>
 
      );
   }

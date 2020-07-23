@@ -57,19 +57,21 @@ class StockForm extends Component {
         }
         this.addSaleRecordToCapital(addingItem);
         this.setState({ Stocks: updatedData, alert_message: "success"})
-      
+        // event.target.reset();
       })
       .catch((error) =>{
         this.setState({alert_message : "error"})
       });
+
+      // this.setState({item: {}})
       
       // console.log(this.state);
       // this.props.history.push('/stocks');
       // console.log(this.Stocks)
-      // event.target.reset();  
-        item["ticker"] = "";
-        item["share"] = "";
-        item["price"] = "";
+      event.target.reset();  
+        // item["ticker"] = "";
+        // item["share"] = "";
+        // item["price"] = "";
         // item["share"] = "";
     }    
   }

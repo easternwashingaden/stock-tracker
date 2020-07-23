@@ -84,10 +84,10 @@ class AddCapital extends Component {
       .catch((error) =>{
         this.setState({alert_message : "error"})
       });
-
-      // let item= {};
-        item["value"] = "";
-        item["description"] = "";
+      event.target.reset(); 
+      // // let item= {};
+      //   item["value"] = "";
+      //   item["description"] = "";
             
     }     
   }

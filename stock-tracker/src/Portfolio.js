@@ -208,7 +208,7 @@ class Portfolio extends Component {
               <td>
                 <CurrencyFormat value={parseFloat(stock.price).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
               </td>
-              <td style = {{color: 'blue'}}>
+              <td >
                 <CurrencyFormat value={parseFloat(currentPrices[i]).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
               </td>
               <td>
@@ -358,7 +358,7 @@ class Portfolio extends Component {
 
                       <div class="w-100"></div>
                       <div className="col-8" style = {{fontWeight: 'bold'}}>
-                        <h6 className = 'center' style = {{marginTop: "2rem", fontWeight: 'bold'}}>Purchased Stocks List</h6>
+                        <h6 className = 'center' style = {{marginTop: "2rem", fontWeight: 'bold'}}>Purchased Stocks</h6>
                         {Stocks.length > 0 ? 
                         <Container className = "border-right">
                           <Table className= 'table table-striped table-hover w-atuo small'>
@@ -381,7 +381,7 @@ class Portfolio extends Component {
                         <p style = {{textAlign: 'center', marginTop: '2rem', fontWeight: 'bold'}}>No Results</p>}
                       </div>
                       <div class="col">
-                        <h6 style = {{textAlign: "center" , marginTop: "2rem", fontWeight: 'bold'}}>Sale Graphical History</h6>
+                        <h6 style = {{textAlign: "center" , marginTop: "2rem", fontWeight: 'bold'}}>Sale History</h6>
                         {this.state.xSales && this.state.ySales.length ? <Plot
                         data={[
                         {

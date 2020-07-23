@@ -55,8 +55,13 @@ class StockForm extends Component {
           addedDate: item.purchasedDate,
           refId: updatedData[updatedData.length - 1].id
         }
+        let fields = {};
+        fields["ticker"] = "";
+        fields["share"] = "";
+        fields["price"] = "";
+        fields["share"] = "";
         this.addSaleRecordToCapital(addingItem);
-        this.setState({ Stocks: updatedData, alert_message: "success"})
+        this.setState({ Stocks: updatedData, alert_message: "success", item : fields})
         // event.target.reset();
       })
       .catch((error) =>{
@@ -68,11 +73,8 @@ class StockForm extends Component {
       // console.log(this.state);
       // this.props.history.push('/stocks');
       // console.log(this.Stocks)
-      event.target.reset();  
-        // item["ticker"] = "";
-        // item["share"] = "";
-        // item["price"] = "";
-        // item["share"] = "";
+      // event.target.reset();  
+        // 
     }    
   }
   

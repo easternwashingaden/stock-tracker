@@ -74,9 +74,16 @@ class AddCapital extends Component {
       .then((response) => {
         const updatedData = this.state.capitals;
         updatedData.push(response.data);
+        
+
+        let fields= {};
+        fields["value"] = "";
+        fields["description"] = "";
+
         this.setState({
           capitals: updatedData,
-          alert_message: "success"
+          alert_message: "success",
+          item: fields
         })
         
       })
@@ -85,9 +92,8 @@ class AddCapital extends Component {
         this.setState({alert_message : "error"})
       });
       event.target.reset(); 
-      // // let item= {};
-      //   item["value"] = "";
-      //   item["description"] = "";
+      
+      
             
     }     
   }

@@ -14,7 +14,7 @@ class Footer extends Component {
          
 
         	
-        <div style={{textAlign: 'center', padding : "1rem", background: "lightgray", marginTop: '20rem'} }>
+        <div style={{textAlign: 'center', padding : "1rem", background: "lightgray", marginTop: '30rem'} }>
           <div className="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center">
             <p>© 2020 Tithvorlak Mok - Copyright All right Reversed</p>
             <div>

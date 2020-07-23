@@ -208,7 +208,7 @@ class Portfolio extends Component {
               <td>
                 <CurrencyFormat value={parseFloat(stock.price).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
               </td>
-              <td>
+              <td style = {{color: 'blue'}}>
                 <CurrencyFormat value={parseFloat(currentPrices[i]).toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'$'} />
               </td>
               <td>

@@ -107,8 +107,8 @@ class Home extends Component {
             // </Form>
             // </div>
         
-        
-        <div className = "push-down home"  >
+        <div className = 'login-background'>
+        <div className = "push-down"  >
             
             <div className="container h-100" >
                 
@@ -163,6 +163,7 @@ class Home extends Component {
             </div>
             
         </div>
+    </div>
     </div>
         )}
     render() { 

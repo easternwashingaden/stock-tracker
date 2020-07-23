@@ -168,7 +168,7 @@ class StockPerformance extends React.Component {
           layout={{width: 720, height: 440, title: 'Stock Performance'}}
         />
         :
-        <h2 className="text-center">No Results</h2>
+        ""
         }
       </div>
     </section>  

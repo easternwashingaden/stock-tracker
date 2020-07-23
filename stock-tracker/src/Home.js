@@ -175,7 +175,7 @@ class Home extends Component {
                 <div>
                     <AppNav/>
 
-                    <h1 style={{textAlign: 'center', padding : "4rem", background: "lightgray", fontFamily: "cursive", fontWeight: "bold"}}>
+                    <h1 style={{textAlign: 'center', padding : "4rem", fontFamily: "cursive", fontWeight: "bold"}}>
                     {/* <h1 style={{textAlign: 'center', padding : "4rem", background: "lightgray", fontWeight: "bold"}}> */}
                         Welcome to Stock Tracker Application   
                     </h1>

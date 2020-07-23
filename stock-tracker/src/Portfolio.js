@@ -7,7 +7,7 @@ import { Button, Container, Form, FormGroup } from 'reactstrap';
 import axios from 'axios';
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
-import {Link} from 'react-router-dom';
+// import {Link} from 'react-router-dom';
 import  Chart from "react-apexcharts";
 import Plot from 'react-plotly.js';
 import CurrencyFormat from 'react-currency-format';
@@ -191,7 +191,14 @@ class Portfolio extends Component {
     render() { 
         const {Stocks, capitals, currentPrices,isLoading} = this.state;
         if(isLoading)
-            return(<div>Loading...</div>)
+          return(
+            <span>
+                <div>Loading...</div>
+                <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+                </div>
+            </span>
+          )
 
         let rows = 
         Stocks.map((stock, i) =>

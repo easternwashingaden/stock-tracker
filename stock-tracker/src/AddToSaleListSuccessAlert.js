@@ -5,7 +5,7 @@ class AddToSaleListSuccessAlert extends Component {
   render() { 
     return (
       <div className = "alert alert-success" role = "alert">
-        New record has been added successfully.
+        New record has been added to the sold list successfully.
       </div>
     );
   }
